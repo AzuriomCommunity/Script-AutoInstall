@@ -3,14 +3,14 @@
 [![Travis CI](https://travis-ci.com/MaximeMichaud/Azuriom-install.svg?branch=master)](https://travis-ci.com/MaximeMichaud/Azuriom-install)
 ## Usage
 ```sh
-wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/Azuriom-install.sh
-chmod +x Azuriom-install.sh
-./Azuriom-install.sh
+wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
+chmod +x azuriom-install.sh
+./azuriom-install.sh
 ```
 ## Compatibilité
 Veuillez considérer les dernières versions comme étant plus stable.
 
-Le script supporte ces OS:
+Le script supporte ces OS :
 
 |        |   |
 |--------|---|
