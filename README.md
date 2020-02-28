@@ -1,6 +1,6 @@
 # Azuriom-install
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a43250aec4e9493485c76878515c0b03)](https://app.codacy.com/manual/MaximeMichaud/Azuriom-install?utm_source=github.com&utm_medium=referral&utm_content=MaximeMichaud/Azuriom-install&utm_campaign=Badge_Grade_Dashboard)
 [![Travis CI](https://travis-ci.com/MaximeMichaud/Azuriom-install.svg?branch=master)](https://travis-ci.com/MaximeMichaud/Azuriom-install)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/d9f1f98d0fd348fe97c95d3dd081a8ff)](https://app.codacy.com/manual/MaximeMichaud/Azuriom-install?utm_source=github.com&utm_medium=referral&utm_content=MaximeMichaud/Azuriom-install&utm_campaign=Badge_Grade_Dashboard)
 ## Usage
 ```sh
 wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
@@ -14,13 +14,13 @@ Le script supporte ces OS :
 
 |        |   |
 |--------|---|
-| Debian 8 | ❌  |
-| Debian 9 | ✅ |
-| Debian 10 | ✅ |
-| Ubuntu 16.04 | ❌  |
-| Ubuntu 18.04 | ❌  |
-| Ubuntu 20.04 | ❌  |
-| CentOS 7 | ❌  |
+| Debian 8 |❌|
+| Debian 9 |✅|
+| Debian 10 |✅|
+| Ubuntu 16.04 |❌|
+| Ubuntu 18.04 |❌|
+| Ubuntu 20.04 |❌|
+| CentOS 7 |❌|
 ## Features
 * MySQL 5.6 à 8.0 (**ne pas prendre le SHA de _8.0_**)
 * PHP 7.2 à 7.4
