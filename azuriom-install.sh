@@ -375,8 +375,8 @@ function install_azuriom() {
   mkdir /var/www/html
   cd /var/www/html
   wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
-  unzip -q v$AZURIOM_VER.zip
-  rm -rf v$AZURIOM_VER.zip
+  unzip -q Azuriom-$AZURIOM_VER.zip
+  rm -rf Azuriom-$AZURIOM_VER.zip
   chmod -R 777 /var/www/html
 }
 
