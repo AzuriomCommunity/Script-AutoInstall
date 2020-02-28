@@ -224,7 +224,7 @@ function aptinstall_php() {
     if [[ "$VERSION_ID" == "8" ]]; then
       echo "deb https://packages.sury.org/php/ jessie main" | sudo tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
-      apt-get install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
+      apt-get install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip php$PHP-bcmath -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
@@ -232,7 +232,7 @@ function aptinstall_php() {
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb https://packages.sury.org/php/ stretch main" | sudo tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
-      apt-get install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
+      apt-get install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip php$PHP-bcmath -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
@@ -240,7 +240,7 @@ function aptinstall_php() {
     if [[ "$VERSION_ID" == "10" ]]; then
       echo "deb https://packages.sury.org/php/ buster main" | sudo tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
-      apt-get install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
+      apt-get install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip php$PHP-bcmath -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
@@ -374,12 +374,9 @@ function install_azuriom() {
   rm -rf /var/www/html/
   mkdir /var/www/html
   cd /var/www/html
-  wget https://github.com/Azuriom/Azuriom/archive/v$AZURIOM_VER.zip
-  mv v$AZURIOM_VER.zip /var/www/
-  cd /var/www/
+  wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
   unzip -q v$AZURIOM_VER.zip
   rm -rf v$AZURIOM_VER.zip
-  mv Azuriom-v$AZURIOM_VER /var/www/html
   chmod -R 777 /var/www/html
 }
 
