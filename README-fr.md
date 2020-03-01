@@ -1,17 +1,16 @@
 # Azuriom-install
 [![Travis CI](https://travis-ci.com/MaximeMichaud/Azuriom-install.svg?branch=master)](https://travis-ci.com/MaximeMichaud/Azuriom-install)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d9f1f98d0fd348fe97c95d3dd081a8ff)](https://app.codacy.com/manual/MaximeMichaud/Azuriom-install?utm_source=github.com&utm_medium=referral&utm_content=MaximeMichaud/Azuriom-install&utm_campaign=Badge_Grade_Dashboard)
-[![French Version](https://img.shields.io/badge/Version%20fran%C3%A7aise-Ici-blue)](https://github.com/MaximeMichaud/Azuriom-install/blob/master/README-fr.md)
-## Usage
+## Utilisation
 ```sh
 wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
 chmod +x azuriom-install.sh
 ./azuriom-install.sh
 ```
-## Compatibility
-Please consider latest versions as more stable.
+## Compatibilité
+Veuillez considérer les dernières versions comme étant plus stable.
 
-The script support these OS:
+Le script supporte ces OS :
 
 |        |   |
 |--------|---|
@@ -22,11 +21,11 @@ The script support these OS:
 | Ubuntu 18.04 |❌|
 | Ubuntu 20.04 |❌|
 | CentOS 7 |❌|
-## Features
-* MySQL 5.6 to 8.0
-* PHP 7.2 to 7.4
+## Fonctionnalités
+* MySQL 5.6 à 8.0
+* PHP 7.2 à 7.4
 * phpMyAdmin 4.9.4
-## To-Do
+## À faire
 https://github.com/MaximeMichaud/Azuriom-install/projects/1/
 ## DOCUMENTATION
 **[WIKI](https://github.com/MaximeMichaud/Azuriom-install/wiki/)**
