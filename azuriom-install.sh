@@ -61,7 +61,7 @@ function isRoot() {
 
 function initialCheck() {
   if ! isRoot; then
-    echo "Désolé, vous devez exécuter ce script en tant que root"
+    echo "Sorry, you need to run this as root"
     exit 1
   fi
   checkOS
@@ -78,13 +78,13 @@ function checkOS() {
 
     if [[ "$ID" == "debian" || "$ID" == "raspbian" ]]; then
       if [[ ! $VERSION_ID =~ (10) ]]; then
-        echo "⚠️ ${alert}Votre version de Debian n'est pas supportée.${normal}"
+        echo "⚠️ ${alert}Your version of Debian is not supported.${normal}"
         echo ""
         echo "However, if you're using Debian >= 9 or unstable/testing then you can continue."
-        echo "Gardez à l'esprit que ce n'est supportée !${normal}"
+        echo "Keep in mind they are not supported, though.${normal}"
         echo ""
         until [[ $CONTINUE =~ (y|n) ]]; do
-          read -rp "Continuer? [y/n] : " -e CONTINUE
+          read -rp "Continue? [y/n] : " -e CONTINUE
         done
         if [[ "$CONTINUE" == "n" ]]; then
           exit 1
@@ -92,7 +92,7 @@ function checkOS() {
       fi
     fi
   else
-    echo "${alert}On dirait que vous n'exécutez pas ce script d'installation automatique sur une distribution Debian ayant Debian 9/10 ${normal}"
+    echo "Looks like you aren't running this script on a Debian, Ubuntu, Fedora, CentOS system ${normal}"
     exit 1
   fi
 }
@@ -110,17 +110,17 @@ function script() {
 
 }
 function installQuestions() {
-  echo "${cyan}Bienvenue dans l'installation automatique pour Azuriom !"
+  echo "${cyan}Welcome to Azuriom-install !"
   echo "https://github.com/MaximeMichaud/Azuriom-install"
-  echo "Je dois vous poser quelques questions avant de commencer l'installation."
-  echo "Vous pouvez laisser les options par défaut et appuyer simplement sur Entrée si cela vous convient."
+  echo "I need to ask some questions before starting the configuration."
+  echo "You can leave the default options and just press Enter if that's right for you."
   echo ""
-  echo "${alert}Veuillez sélectionner pour MYSQL : Use Legacy Authentication Method${normal}"
-  echo "${cyan}Quelle version de PHP ?"
-  echo "${red}Rouge = Fin de vie ${yellow}| Jaune = Sécurité uniquement ${green}| Vert = Support & Sécurité"
+  echo "${alert}Please Select for MYSQL : Use Legacy Authentication Method${normal}"
+  echo "${cyan}Which Version of PHP ?"
+  echo "${red}Red = End of life ${yellow}| Jaune = Security fixes only ${green}| Vert = Active support"
   echo "${yellow}   1) PHP 7.2 "
   echo "${green}   2) PHP 7.3 "
-  echo "   3) PHP 7.4 (recommandé) ${normal}${cyan}"
+  echo "   3) PHP 7.4 (recommended) ${normal}${cyan}"
   until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
     read -rp "Version [1-3]: " -e -i 3 PHP_VERSION
   done
@@ -136,10 +136,10 @@ function installQuestions() {
     ;;
   esac
   echo ""
-  echo "Nous sommes prêts à commencer l'installation."
+  echo "We are ready to start the installation !"
   APPROVE_INSTALL=${APPROVE_INSTALL:-n}
   if [[ $APPROVE_INSTALL =~ n ]]; then
-    read -n1 -r -p "Appuyez sur n'importe quelle touche pour continuer..."
+    read -n1 -r -p "Press any key to continue..."
   fi
 }
 
@@ -161,7 +161,7 @@ function aptinstall_apache2() {
 
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    echo "Installation MYSQL"
+    echo "MYSQL Installation"
     if [[ "$VERSION_ID" == "8" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ jessie mysql-8.0" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ jessie mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
@@ -218,7 +218,7 @@ function aptinstall_mysql() {
 
 function aptinstall_php() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    echo "Installation PHP"
+    echo "PHP Installation"
     wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -
     if [[ "$VERSION_ID" == "8" ]]; then
       echo "deb https://packages.sury.org/php/ jessie main" | sudo tee /etc/apt/sources.list.d/php.list
@@ -275,8 +275,7 @@ function aptinstall_php() {
 }
 function aptinstall_phpmyadmin() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    echo "Installation PHP"
-    wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -
+    echo "phpMyAdmin Installation"
     if [[ "$VERSION_ID" == "8|9" ]]; then
       apt-get install -y phpmyadmin
       rm -rf /usr/share/phpmyadmin/
@@ -396,28 +395,28 @@ function apt-apache2_cloudflare() {
 }
 
 function autoUpdate() {
-  echo "Activation des mises à jour automatique..."
+  echo "Enable Automatic Updates..."
   apt-get install -y unattended-upgrades
 }
 
 function setupdone() {
-  echo "C'est terminé !"
+  echo "It done!"
 }
 function manageMenu() {
   clear
-  echo "Bienvenue dans l'installation automatique pour Azurium !"
+  echo "Welcome to Azuriom-install !"
   echo "https://github.com/MaximeMichaud/Azuriom-install"
   echo ""
-  echo "Il semblerait que le Script a déjà été utilisé dans le passé."
+  echo "It seems that the Script has already been used in the past."
   echo ""
-  echo "Qu'est-ce que tu veux faire ?"
-  echo "   1) Relancer l'installation"
-  echo "   2) Mettre à jour phpMyAdmin"
-  echo "   3) Ajouter un certificat (https)"
-  echo "   4) Mettre à jour le script"
-  echo "   5) Quitter"
+  echo "What do you want to do ?"
+  echo "   1) Restart the installation"
+  echo "   2) Update phpMyAdmin"
+  echo "   3) Add certs (https)"
+  echo "   4) Update the Script"
+  echo "   5) Quit"
   until [[ "$MENU_OPTION" =~ ^[1-5]$ ]]; do
-    read -rp "Sélectionner une option [1-5] : " MENU_OPTION
+    read -rp "Select an option [1-5] : " MENU_OPTION
   done
   case $MENU_OPTION in
   1)
@@ -442,7 +441,7 @@ function update() {
   wget https://raw.githubusercontent.com/MaximeMichaud/azuriom-install/master/azuriom-install.sh -O azuriom-install.sh
   chmod +x azuriom-install.sh
   echo ""
-  echo "Mise à jour effectuée."
+  echo "Update Done."
   sleep 2
   ./azuriom-install.sh
   exit
@@ -464,6 +463,8 @@ function updatephpMyAdmin() {
 }
 
 initialCheck
+
+
 
 if [[ -e /var/www/html/app/ ]]; then
   manageMenu
