@@ -7,10 +7,10 @@ wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azur
 chmod +x azuriom-install.sh
 ./azuriom-install.sh
 ```
-## Compatibilité
-Veuillez considérer les dernières versions comme étant plus stable.
+## Compatibility
+Please consider latest versions as more stable.
 
-Le script supporte ces OS :
+The script support these OS:
 
 |        |   |
 |--------|---|
@@ -22,10 +22,10 @@ Le script supporte ces OS :
 | Ubuntu 20.04 |❌|
 | CentOS 7 |❌|
 ## Features
-* MySQL 5.6 à 8.0 (**ne pas prendre le SHA de _8.0_**)
-* PHP 7.2 à 7.4
+* MySQL 5.6 to 8.0
+* PHP 7.2 to 7.4
 * phpMyAdmin 4.9.4
 ## To-Do
-https://github.com/MaximeMichaud/Azuriom-install/projects/1
-## FAQ
-**MERCI DE REGARDER LE [WIKI](https://github.com/MaximeMichaud/Azuriom-install/wiki/FAQ)**
+https://github.com/MaximeMichaud/Azuriom-install/projects/1/
+## DOCUMENTATION
+**[WIKI](https://github.com/MaximeMichaud/Azuriom-install/wiki/)**
