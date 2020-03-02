@@ -77,7 +77,7 @@ function checkOS() {
     source /etc/os-release
 
     if [[ "$ID" == "debian" || "$ID" == "raspbian" ]]; then
-      if [[ ! $VERSION_ID =~ (10) ]]; then
+      if [[ ! $VERSION_ID =~ (8|9|10) ]]; then
         echo "⚠️ ${alert}Your version of Debian is not supported.${normal}"
         echo ""
         echo "However, if you're using Debian >= 9 or unstable/testing then you can continue."
@@ -85,6 +85,21 @@ function checkOS() {
         echo ""
         until [[ $CONTINUE =~ (y|n) ]]; do
           read -rp "Continue? [y/n] : " -e CONTINUE
+        done
+        if [[ "$CONTINUE" == "n" ]]; then
+          exit 1
+        fi
+      fi
+    elif [[ "$ID" == "ubuntu" ]]; then
+      OS="ubuntu"
+      if [[ ! $VERSION_ID =~ (16.04|18.04|19.04|20.04) ]]; then
+        echo "⚠️ ${alert}Your version of Ubuntu is not supported.${normal}"
+        echo ""
+        echo "However, if you're using Ubuntu > 17 or beta, then you can continue."
+        echo "Keep in mind they are not supported, though.${normal}"
+        echo ""
+        until [[ $CONTINUE =~ (y|n) ]]; do
+          read -rp "Continue? [y/n]: " -e CONTINUE
         done
         if [[ "$CONTINUE" == "n" ]]; then
           exit 1
@@ -117,7 +132,7 @@ function installQuestions() {
   echo ""
   echo "${alert}Please Select for MYSQL : Use Legacy Authentication Method${normal}"
   echo "${cyan}Which Version of PHP ?"
-  echo "${red}Red = End of life ${yellow}| Jaune = Security fixes only ${green}| Vert = Active support"
+  echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
   echo "${yellow}   1) PHP 7.2 "
   echo "${green}   2) PHP 7.3 "
   echo "   3) PHP 7.4 (recommended) ${normal}${cyan}"
@@ -244,127 +259,38 @@ function aptinstall_php() {
       sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
-    if [[ "$VERSION_ID" == "16.04" ]]; then
-      wget https://dev.mysql.com/get/mysql-apt-config_0.8.8-1_all.deb
-      ls mysql-apt-config_0.8.8-1_all.deb
-      dpkg -i mysql-apt-config_0.8.8-1_all.deb
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install --allow-unauthenticated mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-    if [[ "$VERSION_ID" == "18.04" ]]; then
-      wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
-      ls mysql-apt-config_0.8.13-1_all.deb
-      dpkg -i mysql-apt-config_0.8.13-1_all.deb
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install --allow-unauthenticated mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-    if [[ "$VERSION_ID" == "20.04" ]]; then
-      wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
-      ls mysql-apt-config_0.8.13-1_all.deb
-      dpkg -i mysql-apt-config_0.8.13-1_all.deb
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install --allow-unauthenticated mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
+    if [[ "$VERSION_ID" == "16.04|18.04|20.04" ]]; then
+      add-apt-repository -y ppa:ondrej/php
+      apt-get update >/dev/null
+      apt install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
+      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
+      systemctl restart apache2
     fi
   fi
 }
 function aptinstall_phpmyadmin() {
+  echo "phpMyAdmin Installation"
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    echo "phpMyAdmin Installation"
-    if [[ "$VERSION_ID" == "8|9" ]]; then
-      apt-get install -y phpmyadmin
-      rm -rf /usr/share/phpmyadmin/
-      mkdir /usr/share/phpmyadmin/
-      cd /usr/share/phpmyadmin/
-      wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-      rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-      if ! grep -q "Include /etc/phpmyadmin/apache.conf" /etc/apache2/apache2.conf; then
-        echo "Include /etc/phpmyadmin/apache.conf" >>/etc/apache2/apache2.conf
-      fi
-      mkdir /usr/share/phpmyadmin/tmp
-      chmod 777 /usr/share/phpmyadmin/tmp
-      randomBlowfishSecret=$(openssl rand -base64 32)
-      sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
-    fi
-    if [[ "$VERSION_ID" == "10" ]]; then
-      mkdir /usr/share/phpmyadmin/
-      cd /usr/share/phpmyadmin/
-      wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-      rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/phpmyadmin.conf
-      mv phpmyadmin.conf /etc/apache2/sites-available/
-      mkdir /usr/share/phpmyadmin/tmp
-      chmod 777 /usr/share/phpmyadmin/tmp
-      randomBlowfishSecret=$(openssl rand -base64 32)
-      sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
-      a2ensite phpmyadmin
-      systemctl restart apache2
-    fi
-    if [[ "$VERSION_ID" == "16.04" ]]; then
-      apt-get install -y phpmyadmin
-      rm -rf /usr/share/phpmyadmin/
-      mkdir /usr/share/phpmyadmin/
-      cd /usr/share/phpmyadmin/
-      wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-      rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-      if ! grep -q "Include /etc/phpmyadmin/apache.conf" /etc/apache2/apache2.conf; then
-        echo "Include /etc/phpmyadmin/apache.conf" >>/etc/apache2/apache2.conf
-      fi
-      mkdir /usr/share/phpmyadmin/tmp
-      chmod 777 /usr/share/phpmyadmin/tmp
-      randomBlowfishSecret=$(openssl rand -base64 32)
-      sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
-    fi
-    if [[ "$VERSION_ID" == "18.04" ]]; then
-      apt-get install -y phpmyadmin
-      rm -rf /usr/share/phpmyadmin/
-      mkdir /usr/share/phpmyadmin/
-      cd /usr/share/phpmyadmin/
-      wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-      rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-      if ! grep -q "Include /etc/phpmyadmin/apache.conf" /etc/apache2/apache2.conf; then
-        echo "Include /etc/phpmyadmin/apache.conf" >>/etc/apache2/apache2.conf
-      fi
-      mkdir /usr/share/phpmyadmin/tmp
-      chmod 777 /usr/share/phpmyadmin/tmp
-      randomBlowfishSecret=$(openssl rand -base64 32)
-      sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
-    fi
-    if [[ "$VERSION_ID" == "20.04" ]]; then
-      apt-get install -y phpmyadmin
-      rm -rf /usr/share/phpmyadmin/
-      mkdir /usr/share/phpmyadmin/
-      cd /usr/share/phpmyadmin/
-      wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-      rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-      rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-      if ! grep -q "Include /etc/phpmyadmin/apache.conf" /etc/apache2/apache2.conf; then
-        echo "Include /etc/phpmyadmin/apache.conf" >>/etc/apache2/apache2.conf
-      fi
-      mkdir /usr/share/phpmyadmin/tmp
-      chmod 777 /usr/share/phpmyadmin/tmp
-      randomBlowfishSecret=$(openssl rand -base64 32)
-      sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
-    fi
+    mkdir /usr/share/phpmyadmin/
+    cd /usr/share/phpmyadmin/
+    wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+    tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+    mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
+    rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+    rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/phpmyadmin.conf
+    mv phpmyadmin.conf /etc/apache2/sites-available/
+    mkdir /usr/share/phpmyadmin/tmp
+    chmod 777 /usr/share/phpmyadmin/tmp
+    randomBlowfishSecret=$(openssl rand -base64 32)
+    sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
+    a2ensite phpmyadmin
+    systemctl restart apache2
+  elif [[ "$OS" =~ (centos|amzn) ]]; then
+    echo "No Support"
+  elif [[ "$OS" == "fedora" ]]; then
+    echo "No Support"
   fi
 }
 
@@ -463,8 +389,6 @@ function updatephpMyAdmin() {
 }
 
 initialCheck
-
-
 
 if [[ -e /var/www/html/app/ ]]; then
   manageMenu
