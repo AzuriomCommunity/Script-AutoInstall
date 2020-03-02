@@ -68,7 +68,7 @@ function initialCheck() {
 }
 
 # Define versions
-PHPMYADMIN_VER=4.9.4
+PHPMYADMIN_VER=5.0.1
 AZURIOM_VER=0.1.3
 
 function checkOS() {
@@ -393,11 +393,11 @@ function updatephpMyAdmin() {
   rm -rf /usr/share/phpmyadmin/
   mkdir /usr/share/phpmyadmin/
   cd /usr/share/phpmyadmin/
-  wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMINS_VER/phpMyAdmin-$PHPMYADMINS_VER-all-languages.tar.gz
-  tar xzf phpMyAdmin-$PHPMYADMINS_VER-all-languages.tar.gz
-  mv phpMyAdmin-$PHPMYADMINS_VER-all-languages/* /usr/share/phpmyadmin
-  rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMINS_VER-all-languages.tar.gz
-  rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMINS_VER-all-languages
+  wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
+  rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
   mkdir /usr/share/phpmyadmin/tmp
   chmod 777 /usr/share/phpmyadmin/tmp
   randomBlowfishSecret=$(openssl rand -base64 32)
