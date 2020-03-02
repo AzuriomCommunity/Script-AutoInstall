@@ -259,7 +259,23 @@ function aptinstall_php() {
       sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
-    if [[ "$VERSION_ID" == "16.04|18.04|20.04" ]]; then
+    if [[ "$VERSION_ID" == "16.04" ]]; then
+      add-apt-repository -y ppa:ondrej/php
+      apt-get update >/dev/null
+      apt install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
+      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
+      systemctl restart apache2
+    fi
+    if [[ "$VERSION_ID" == "18.04" ]]; then
+      add-apt-repository -y ppa:ondrej/php
+      apt-get update >/dev/null
+      apt install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
+      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
+      systemctl restart apache2
+    fi
+    if [[ "$VERSION_ID" == "20.04" ]]; then
       add-apt-repository -y ppa:ondrej/php
       apt-get update >/dev/null
       apt install php$PHP libapache2-mod-php$PHP php$PHP-mysql php$PHP-curl php$PHP-json php$PHP-gd php$PHP-memcached php$PHP-intl php$PHP-sqlite3 php$PHP-gmp php$PHP-geoip php$PHP-mbstring php$PHP-xml php$PHP-zip -y
