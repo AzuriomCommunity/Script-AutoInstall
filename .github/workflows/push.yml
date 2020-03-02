@@ -8,4 +8,4 @@ jobs:
     - name: shellcheck
       uses: ludeeus/action-shellcheck@0.1.0
       with:
-        args: azuriom-install.sh -e SC2034,SC2164
+        args: azuriom-install.sh -e SC2034
