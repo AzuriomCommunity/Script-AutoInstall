@@ -289,7 +289,7 @@ function aptinstall_phpmyadmin() {
   echo "phpMyAdmin Installation"
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     mkdir /usr/share/phpmyadmin/
-    cd /usr/share/phpmyadmin/
+    cd /usr/share/phpmyadmin/ || exit
     wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
@@ -313,7 +313,7 @@ function aptinstall_phpmyadmin() {
 function install_azuriom() {
   rm -rf /var/www/html/
   mkdir /var/www/html
-  cd /var/www/html
+  cd /var/www/html || exit
   wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
   unzip -q Azuriom-$AZURIOM_VER.zip
   rm -rf Azuriom-$AZURIOM_VER.zip
@@ -328,7 +328,7 @@ function install_composer() {
 
 function apt-apache2_cloudflare() {
   apt-get update >/dev/null
-  cd /root/
+  cd /root/ || exit
   apt-get install libtool apache2-dev
   wget https://www.cloudflare.com/static/misc/mod_cloudflare/mod_cloudflare.c
   apxs -a -i -c mod_cloudflare.c
@@ -392,7 +392,7 @@ function update() {
 function updatephpMyAdmin() {
   rm -rf /usr/share/phpmyadmin/
   mkdir /usr/share/phpmyadmin/
-  cd /usr/share/phpmyadmin/
+  cd /usr/share/phpmyadmin/ || exit
   wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
   tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
   mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
