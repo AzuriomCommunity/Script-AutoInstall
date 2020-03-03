@@ -106,6 +106,21 @@ function checkOS() {
         fi
       fi
     fi
+  elif [[ -e /etc/fedora-release ]]; then
+    OS=fedora
+  elif [[ -e /etc/centos-release ]]; then
+    if ! grep -qs "^CentOS Linux release 7" /etc/centos-release; then
+      echo "${alert}Your version of CentOS is not supported.${normal}"
+      echo "${red}Keep in mind they are not supported, though.${normal}"
+      echo ""
+      unset CONTINUE
+      until [[ $CONTINUE =~ (y|n) ]]; do
+        read -rp "Continue? [y/n] : " -e CONTINUE
+      done
+      if [[ "$CONTINUE" == "n" ]]; then
+        exit 1
+      fi
+    fi
   else
     echo "Looks like you aren't running this script on a Debian, Ubuntu, Fedora, CentOS system ${normal}"
     exit 1
@@ -285,6 +300,7 @@ function aptinstall_php() {
     fi
   fi
 }
+
 function aptinstall_phpmyadmin() {
   echo "phpMyAdmin Installation"
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
