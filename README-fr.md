@@ -27,7 +27,7 @@ Le script supporte ces OS :
 ## Fonctionnalités
 * MySQL 5.6 à 8.0
 * PHP 7.2 à 7.4
-* phpMyAdmin 4.9.4
+* phpMyAdmin 5.0.1
 ## À faire
 https://github.com/MaximeMichaud/Azuriom-install/projects/1/
 ## DOCUMENTATION
