@@ -68,7 +68,7 @@ function initialCheck() {
 }
 
 # Define versions
-PHPMYADMIN_VER=5.0.1
+PHPMYADMIN_VER=5.0.2
 AZURIOM_VER=0.2.1
 
 function checkOS() {
