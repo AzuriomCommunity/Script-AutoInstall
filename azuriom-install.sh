@@ -69,7 +69,7 @@ function initialCheck() {
 
 # Define versions
 PHPMYADMIN_VER=5.0.1
-AZURIOM_VER=0.1.3
+AZURIOM_VER=0.2.1
 
 function checkOS() {
   if [[ -e /etc/debian_version ]]; then
