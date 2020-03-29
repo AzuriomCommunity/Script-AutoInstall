@@ -77,7 +77,7 @@ function checkOS() {
     source /etc/os-release
 
     if [[ "$ID" == "debian" || "$ID" == "raspbian" ]]; then
-      if [[ ! $VERSION_ID =~ (8|9|10) ]]; then
+      if [[ ! $VERSION_ID =~ (9|10) ]]; then
         echo "⚠️ ${alert}Your version of Debian is not supported.${normal}"
         echo ""
         echo "However, if you're using Debian >= 9 or unstable/testing then you can continue."
@@ -192,14 +192,6 @@ function aptinstall_apache2() {
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
-    if [[ "$VERSION_ID" == "8" ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ jessie mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ jessie mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get -o Acquire::Check-Valid-Until=false update
-      apt-get install --allow-unauthenticated mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
@@ -250,14 +242,6 @@ function aptinstall_php() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "PHP Installation"
     wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -
-    if [[ "$VERSION_ID" == "8" ]]; then
-      echo "deb https://packages.sury.org/php/ jessie main" | sudo tee /etc/apt/sources.list.d/php.list
-      apt-get update >/dev/null
-      apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
-      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 20M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|post_max_size = 8M|post_max_size = 20M|' /etc/php/$PHP/apache2/php.ini
-      systemctl restart apache2
-    fi
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb https://packages.sury.org/php/ stretch main" | sudo tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null

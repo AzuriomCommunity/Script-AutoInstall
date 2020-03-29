@@ -17,7 +17,7 @@ The script support these OS:
 
 |        |   |
 |--------|---|
-| Debian 8 |❔|
+| Debian 8 |❌|
 | Debian 9 |✅|
 | Debian 10 |✅|
 | Ubuntu 14.04 |✅|
