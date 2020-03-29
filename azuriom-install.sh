@@ -1,11 +1,11 @@
 #!/bin/bash
 #
-# [Script d'installation automatique sur Linux pour Azurium]
+# [Automatic installation on Linux for Azurium]
 #
 # GitHub : https://github.com/MaximeMichaud/Azuriom-install
 # URL : https://azuriom.com/
 #
-# Ce script est destiné à une installation rapide et facile :
+# This script is intended for a quick and easy installation :
 # wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
 # chmod +x azuriom-install.sh
 # ./azuriom-install.sh
