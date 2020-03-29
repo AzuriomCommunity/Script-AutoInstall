@@ -304,19 +304,19 @@ function aptinstall_php() {
 function aptinstall_phpmyadmin() {
   echo "phpMyAdmin Installation"
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    mkdir /usr/share/phpmyadmin/
+    mkdir /usr/share/phpmyadmin/ || exit
     cd /usr/share/phpmyadmin/ || exit
     wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-    mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
+    mv phpMyAdmin-$PHPMYADiMIN_VER-all-languages/* /usr/share/phpmyadmin
     rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/phpmyadmin.conf
-    mv phpmyadmin.conf /etc/apache2/sites-available/
-    mkdir /usr/share/phpmyadmin/tmp
+    mkdir /usr/share/phpmyadmin/tmp || exit
     chmod 777 /usr/share/phpmyadmin/tmp
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
+    wget https://raw.githubusercontent.com/MaximeMichaud/mineweb-install/master/conf/phpmyadmin.conf
+    mv phpmyadmin.conf /etc/apache2/sites-available/
     a2ensite phpmyadmin
     systemctl restart apache2
   elif [[ "$OS" =~ (centos|amzn) ]]; then
