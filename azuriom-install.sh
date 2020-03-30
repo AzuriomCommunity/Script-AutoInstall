@@ -292,7 +292,7 @@ function aptinstall_phpmyadmin() {
     cd /usr/share/phpmyadmin/ || exit
     wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-    mv phpMyAdmin-$PHPMYADiMIN_VER-all-languages/* /usr/share/phpmyadmin
+    mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
     rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
     mkdir /usr/share/phpmyadmin/tmp || exit
