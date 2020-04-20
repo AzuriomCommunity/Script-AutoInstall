@@ -335,7 +335,7 @@ function install_azuriom() {
   unzip -q Azuriom-$AZURIOM_VER.zip
   rm -rf Azuriom-$AZURIOM_VER.zip
   chmod -R 770 storage bootstrap/cache resources/themes plugins
-  chown -R www-data:www-data /var/www/azuriom
+  chown -R www-data:www-data /var/www/html
 }
 
 function install_composer() {
