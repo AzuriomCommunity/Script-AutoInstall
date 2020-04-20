@@ -176,7 +176,7 @@ function aptupdate() {
   apt-get update >/dev/null
 }
 function aptinstall() {
-  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip sudo lsb-release gnupg openssl curl >/dev/null
+  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl >/dev/null
 }
 
 function aptinstall_apache2() {
@@ -249,9 +249,9 @@ function aptinstall_mysql() {
 function aptinstall_php() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "PHP Installation"
-    wget -q https://packages.sury.org/php/apt.gpg -O- | sudo apt-key add -
+    wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
     if [[ "$VERSION_ID" == "9" ]]; then
-      echo "deb https://packages.sury.org/php/ stretch main" | sudo tee /etc/apt/sources.list.d/php.list
+      echo "deb https://packages.sury.org/php/ stretch main" | tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
@@ -259,7 +259,7 @@ function aptinstall_php() {
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" == "10" ]]; then
-      echo "deb https://packages.sury.org/php/ buster main" | sudo tee /etc/apt/sources.list.d/php.list
+      echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
@@ -267,7 +267,7 @@ function aptinstall_php() {
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
-      echo "deb https://packages.sury.org/php/ bullseye main" | sudo tee /etc/apt/sources.list.d/php.list
+      echo "deb https://packages.sury.org/php/ bullseye main" | tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
