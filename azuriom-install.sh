@@ -191,7 +191,7 @@ function aptinstall_apache2() {
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
-	wget https://github.com/MaximeMichaud/Azuriom-install/blob/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
+    wget https://github.com/MaximeMichaud/Azuriom-install/blob/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
@@ -208,7 +208,7 @@ function aptinstall_mysql() {
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
-	if [[ "$VERSION_ID" == "11" ]]; then
+    if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ buster mysql-8.0" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
@@ -266,7 +266,7 @@ function aptinstall_php() {
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
-	if [[ "$VERSION_ID" == "11" ]]; then
+    if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb https://packages.sury.org/php/ buster main" | sudo tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
@@ -316,7 +316,7 @@ function aptinstall_phpmyadmin() {
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
     wget https://raw.githubusercontent.com/MaximeMichaud/mineweb-install/master/conf/phpmyadmin.conf
-	ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
+    ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
     mv phpmyadmin.conf /etc/apache2/sites-available/
     a2ensite phpmyadmin
     systemctl restart apache2
@@ -335,6 +335,7 @@ function install_azuriom() {
   unzip -q Azuriom-$AZURIOM_VER.zip
   rm -rf Azuriom-$AZURIOM_VER.zip
   chmod -R 770 storage bootstrap/cache resources/themes plugins
+  chown -R www-data:www-data /var/www/azuriom
 }
 
 function install_composer() {
