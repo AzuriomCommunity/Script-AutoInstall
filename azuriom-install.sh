@@ -145,7 +145,6 @@ function installQuestions() {
   echo "I need to ask some questions before starting the configuration."
   echo "You can leave the default options and just press Enter if that's right for you."
   echo ""
-  echo "${alert}Please Select for MYSQL : Use Legacy Authentication Method${normal}"
   echo "${cyan}Which Version of PHP ?"
   echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
   echo "${yellow}   1) PHP 7.2 "
@@ -192,6 +191,7 @@ function aptinstall_apache2() {
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
+	wget https://github.com/MaximeMichaud/Azuriom-install/blob/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
