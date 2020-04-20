@@ -334,7 +334,7 @@ function install_azuriom() {
   wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
   unzip -q Azuriom-$AZURIOM_VER.zip
   rm -rf Azuriom-$AZURIOM_VER.zip
-  chmod -R 777 /var/www/html
+  chmod -R 770 storage bootstrap/cache resources/themes plugins
 }
 
 function install_composer() {
