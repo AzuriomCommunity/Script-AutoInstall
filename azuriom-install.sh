@@ -173,10 +173,10 @@ function installQuestions() {
 }
 
 function aptupdate() {
-  apt-get update >/dev/null
+  apt-get update
 }
 function aptinstall() {
-  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl >/dev/null
+  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
 }
 
 function aptinstall_apache2() {
