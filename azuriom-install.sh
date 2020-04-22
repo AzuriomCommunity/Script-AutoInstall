@@ -234,9 +234,8 @@ function aptinstall_mysql() {
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "20.04" ]]; then
-      wget https://dev.mysql.com/get/mysql-apt-config_0.8.13-1_all.deb
-      ls mysql-apt-config_0.8.13-1_all.deb
-      dpkg -i mysql-apt-config_0.8.13-1_all.deb
+      echo "deb http://repo.mysql.com/apt/ubuntu/ focal mysql-8.0" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/ubuntu/ focal mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
