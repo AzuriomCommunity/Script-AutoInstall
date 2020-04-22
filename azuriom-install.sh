@@ -209,6 +209,7 @@ function aptinstall_mysql() {
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
+      # not available right now
       echo "deb http://repo.mysql.com/apt/debian/ bullseye mysql-8.0" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ bullseye mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
@@ -265,6 +266,7 @@ function aptinstall_php() {
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
+      # not available right now
       echo "deb https://packages.sury.org/php/ bullseye main" | tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
