@@ -92,7 +92,7 @@ function checkOS() {
       fi
     elif [[ "$ID" == "ubuntu" ]]; then
       OS="ubuntu"
-      if [[ ! $VERSION_ID =~ (16.04|18.04|19.04|20.04) ]]; then
+      if [[ ! $VERSION_ID =~ (16.04|18.04|20.04) ]]; then
         echo "⚠️ ${alert}Your version of Ubuntu is not supported.${normal}"
         echo ""
         echo "However, if you're using Ubuntu > 17 or beta, then you can continue."
