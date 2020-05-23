@@ -316,7 +316,7 @@ function aptinstall_phpmyadmin() {
     chmod 700 /usr/share/phpmyadmin/tmp
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
-    wget https://raw.githubusercontent.com/MaximeMichaud/mineweb-install/master/conf/phpmyadmin.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/phpmyadmin.conf
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
     mv phpmyadmin.conf /etc/apache2/sites-available/
     a2ensite phpmyadmin
