@@ -14,17 +14,18 @@ Veuillez considérer les dernières versions comme étant plus stable.
 
 Le script supporte ces OS :
 
-|        |   |
-|--------|---|
-| Debian 8 |❌|
-| Debian 9 |✅|
-| Debian 10 |✅|
-| Debian 11 |✅|
-| Ubuntu 14.04 |❌|
-| Ubuntu 16.04 |✅|
-| Ubuntu 18.04 |✅|
-| Ubuntu 20.04 |✅|
-| CentOS 7 |❌|
+|Distribution	        |Support|
+|--------               |---    |
+| Debian 8              |❌     |
+| Debian 9              |✅     |
+| Debian 10             |✅     |
+| Debian 11             |❔      |
+| Ubuntu 14.04          |❌     |
+| Ubuntu 16.04          |✅     |
+| Ubuntu 18.04          |✅     |
+| Ubuntu 20.04          |✅     |
+| CentOS 7              |❌     |
+| CentOS 8              |❌     |
 ## Fonctionnalités
 * MySQL 5.6 à 8.0
 * PHP 7.2 à 7.4
