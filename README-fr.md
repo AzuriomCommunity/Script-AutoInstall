@@ -5,7 +5,7 @@
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://github.com/GameServerManagers/LinuxGSM/blob/master/LICENSE)
 ## Utilisation
 ```sh
-wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
+curl -O https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
 chmod +x azuriom-install.sh
 ./azuriom-install.sh
 ```
