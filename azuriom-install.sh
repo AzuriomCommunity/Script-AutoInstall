@@ -68,20 +68,8 @@ function initialCheck() {
 }
 
 # Define versions
-PHPMYADMIN_VER="$(
-	git ls-remote --tags https://github.com/phpmyadmin/phpmyadmin.git \
-		| cut -d/ -f3 \
-		| grep -vE -- '-rc|-b' \
-		| sed -E 's/^v//' \
-		| sort -V \
-		| tail -1 )"
-AZURIOM_VER="$(
-	git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
-		| cut -d/ -f3 \
-		| grep -vE -- '-rc|-b' \
-		| sed -E 's/^v//' \
-		| sort -V \
-		| tail -1 )"
+PHPMYADMIN_VER=5.0.2
+AZURIOM_VER=0.2.5
 
 function checkOS() {
   if [[ -e /etc/debian_version ]]; then
