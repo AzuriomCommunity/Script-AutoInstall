@@ -82,6 +82,7 @@ AZURIOM_VER="$(
 		| sed -E 's/^v//' \
 		| sort -V \
 		| tail -1 )"
+
 function checkOS() {
   if [[ -e /etc/debian_version ]]; then
     OS="debian"
@@ -187,7 +188,7 @@ function aptupdate() {
   apt-get update
 }
 function aptinstall() {
-  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
+  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl git
 }
 
 function aptinstall_apache2() {
