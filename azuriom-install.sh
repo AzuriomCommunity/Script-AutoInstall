@@ -67,10 +67,6 @@ function initialCheck() {
   checkOS
 }
 
-# Define versions
-PHPMYADMIN_VER=5.0.2
-AZURIOM_VER=0.2.5
-
 function checkOS() {
   if [[ -e /etc/debian_version ]]; then
     OS="debian"
@@ -305,6 +301,13 @@ function aptinstall_phpmyadmin() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     mkdir /usr/share/phpmyadmin/ || exit
     cd /usr/share/phpmyadmin/ || exit
+	PHPMYADMIN_VER="$(
+	git ls-remote --tags https://github.com/phpmyadmin/phpmyadmin.git \
+		| cut -d/ -f3 \
+		| grep -vE -- '-rc|-b' \
+		| sed -E 's/^v//' \
+		| sort -V \
+		| tail -1 )"
     wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
@@ -332,6 +335,13 @@ function install_azuriom() {
   rm -rf /var/www/html/
   mkdir /var/www/html
   cd /var/www/html || exit
+  AZURIOM_VER="$(
+	git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
+		| cut -d/ -f3 \
+		| grep -vE -- '-rc|-b' \
+		| sed -E 's/^v//' \
+		| sort -V \
+		| tail -1 )"
   wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
   unzip -q Azuriom-$AZURIOM_VER.zip
   rm -rf Azuriom-$AZURIOM_VER.zip
