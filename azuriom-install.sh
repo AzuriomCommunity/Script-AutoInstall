@@ -131,6 +131,7 @@ function script() {
   aptinstall_mysql
   aptinstall_php
   aptinstall_phpmyadmin
+  install_composer
   install_azuriom
   setupdone
 
