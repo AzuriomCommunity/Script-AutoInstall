@@ -27,7 +27,7 @@ Le script supporte ces OS :
 | CentOS 7              |❌     |
 | CentOS 8              |❌     |
 ## Fonctionnalités
-* MySQL 5.6 à 8.0
+* MySQL 8.0
 * PHP 7.2 à 7.4
 * phpMyAdmin 5.0.2
 ## À faire
