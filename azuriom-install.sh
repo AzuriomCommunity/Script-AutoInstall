@@ -355,13 +355,14 @@ function install_composer() {
   chmod +x /usr/local/bin/composer
 }
 
-function apt-apache2_cloudflare() {
-  apt-get update >/dev/null
-  cd /root/ || exit
-  apt-get install libtool apache2-dev
-  wget https://www.cloudflare.com/static/misc/mod_cloudflare/mod_cloudflare.c
-  apxs -a -i -c mod_cloudflare.c
-  apxs2 -a -i -c mod_cloudflare.c
+function mod_cloudflare() {
+  #disabled for the moment
+  a2enmod remoteip
+  cd /etc/apache2 || exit
+  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/apache2.conf
+  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/000-default.conf
+  cd /etc/apache2/conf-available || exit
+  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/remoteip.conf
   systemctl restart apache2
 }
 
