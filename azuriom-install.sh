@@ -302,13 +302,7 @@ function aptinstall_phpmyadmin() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     mkdir /usr/share/phpmyadmin/ || exit
     cd /usr/share/phpmyadmin/ || exit
-	PHPMYADMIN_VER="$(
-	git ls-remote --tags https://github.com/phpmyadmin/phpmyadmin.git \
-		| cut -d/ -f3 \
-		| grep -vE -- '-rc|-b' \
-		| sed -E 's/^v//' \
-		| sort -V \
-		| tail -1 )"
+	PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
     wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
@@ -427,7 +421,8 @@ function updatephpMyAdmin() {
   rm -rf /usr/share/phpmyadmin/
   mkdir /usr/share/phpmyadmin/
   cd /usr/share/phpmyadmin/ || exit
-  wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
+  wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.zip
   tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
   mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
   rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
