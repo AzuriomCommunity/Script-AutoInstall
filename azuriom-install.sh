@@ -421,11 +421,11 @@ function updatephpMyAdmin() {
   rm -rf /usr/share/phpmyadmin/
   mkdir /usr/share/phpmyadmin/
   cd /usr/share/phpmyadmin/ || exit
-  PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
   wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.zip
-  tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  unzip phpMyAdmin-latest-all-languages.zip
+  PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
   mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-  rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  rm /usr/share/phpmyadmin/phpMyAdmin-latest-all-languages.zip
   rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
   # Create TempDir
   mkdir /usr/share/phpmyadmin/tmp || exit
