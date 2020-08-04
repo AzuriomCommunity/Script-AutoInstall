@@ -352,7 +352,7 @@ function install_cron() {
   cd /var/www/html || exit
   apt install cron -y
   crontab -l > cron
-  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
+  wget -O cron https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
   crontab cron
   rm cron
 }
