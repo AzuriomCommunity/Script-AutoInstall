@@ -133,7 +133,6 @@ function script() {
   aptinstall_phpmyadmin
   install_composer
   install_azuriom
-  install_cron
   setupdone
 
 }
