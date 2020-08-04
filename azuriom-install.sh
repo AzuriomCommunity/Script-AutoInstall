@@ -343,7 +343,7 @@ function install_azuriom() {
   wget https://azuriom.com/storage/AzuriomInstaller.zip
   unzip AzuriomInstaller.zip
   rm -rf AzuriomInstaller.zip
-  chmod -R 770 storage bootstrap/cache resources/themes plugins
+  chmod -R 755 /var/www/html
   chown -R www-data:www-data /var/www/html
 }
 
