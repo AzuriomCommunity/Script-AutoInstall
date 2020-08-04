@@ -133,6 +133,7 @@ function script() {
   aptinstall_phpmyadmin
   install_composer
   install_azuriom
+  install_cron
   setupdone
 
 }
@@ -345,6 +346,14 @@ function install_azuriom() {
   rm -rf AzuriomInstaller.zip
   chmod -R 755 /var/www/html
   chown -R www-data:www-data /var/www/html
+}
+
+function install_cron() {
+  cd /var/www/html || exit
+  apt install cron -y
+  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
+  crontab cron
+  rm cron
 }
 
 function install_composer() {
