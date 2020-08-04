@@ -173,7 +173,7 @@ function aptupdate() {
   apt-get update
 }
 function aptinstall() {
-  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl git
+  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
 }
 
 function aptinstall_apache2() {
@@ -330,16 +330,19 @@ function install_azuriom() {
   rm -rf /var/www/html/
   mkdir /var/www/html
   cd /var/www/html || exit
-  AZURIOM_VER="$(
-	git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
-		| cut -d/ -f3 \
-		| grep -vE -- '-rc|-b' \
-		| sed -E 's/^v//' \
-		| sort -V \
-		| tail -1 )"
-  wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
-  unzip -q Azuriom-$AZURIOM_VER.zip
-  rm -rf Azuriom-$AZURIOM_VER.zip
+  #AZURIOM_VER="$(
+	#git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
+		#| cut -d/ -f3 \
+		#| grep -vE -- '-rc|-b' \
+		#| sed -E 's/^v//' \
+		#| sort -V \
+		#| tail -1 )"
+  #wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
+  #unzip -q Azuriom-$AZURIOM_VER.zip
+  #rm -rf Azuriom-$AZURIOM_VER.zip
+  wget https://azuriom.com/storage/AzuriomInstaller.zip
+  unzip AzuriomInstaller.zip
+  rm -rf AzuriomInstaller.zip
   chmod -R 770 storage bootstrap/cache resources/themes plugins
   chown -R www-data:www-data /var/www/html
 }
@@ -369,7 +372,7 @@ function autoUpdate() {
 function setupdone() {
   IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
   echo "It done!"
-  echo "Azuriom: http://$IP/"
+  echo "Configuration Database/User: http://$IP/install.php"
   echo "phpMyAdmin: http://$IP/phpmyadmin"
 }
 function manageMenu() {
