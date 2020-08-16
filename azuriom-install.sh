@@ -118,7 +118,7 @@ function checkOS() {
       fi
     fi
   else
-    echo "Looks like you aren't running this script on a Debian, Ubuntu, Fedora, CentOS system ${normal}"
+    echo "Looks like you aren't running this script on a Debian, Ubuntu, Fedora or CentOS system ${normal}"
     exit 1
   fi
 }
