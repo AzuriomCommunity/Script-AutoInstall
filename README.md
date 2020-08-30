@@ -29,7 +29,7 @@ This script supports the following Linux distributions:
 | CentOS 8                |❌     |
 ## Supports
 * MySQL 8.0
-* PHP 7.2 to 7.4
+* PHP 7.3 to 7.4
 * phpMyAdmin 5.0.2
 ## To-Do
 https://github.com/MaximeMichaud/Azuriom-install/projects/1/

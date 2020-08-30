@@ -28,7 +28,7 @@ Le script supporte ces OS :
 | CentOS 8              |❌     |
 ## Fonctionnalités
 * MySQL 8.0
-* PHP 7.2 à 7.4
+* PHP 7.3 à 7.4
 * phpMyAdmin 5.0.2
 ## À faire
 https://github.com/MaximeMichaud/Azuriom-install/projects/1/
