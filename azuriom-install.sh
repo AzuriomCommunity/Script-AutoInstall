@@ -151,12 +151,9 @@ function installQuestions() {
   done
   case $PHP_VERSION in
   1)
-    PHP="7.2"
-    ;;
-  2)
     PHP="7.3"
     ;;
-  3)
+  2)
     PHP="7.4"
     ;;
   esac
