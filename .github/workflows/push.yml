@@ -6,6 +6,6 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - name: shellcheck
-      uses: ludeeus/action-shellcheck@0.1.0
+      uses: ludeeus/action-shellcheck@master
       with:
         args: azuriom-install.sh -e SC2034
