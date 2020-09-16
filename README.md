@@ -28,7 +28,7 @@ This script supports the following Linux distributions:
 | CentOS 7                |❌     |
 | CentOS 8                |❌     |
 ## Supports
-* MySQL 8.0
+* MySQL 5.7 - 8.0 & MariaDB 10.3 - 10.5
 * PHP 7.3 to 7.4
 * phpMyAdmin 5.0.2
 ## To-Do
