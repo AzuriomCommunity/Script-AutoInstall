@@ -361,7 +361,7 @@ function autoUpdate() {
 }
 
 function setupdone() {
-  IP=$(ip addr | grep 'inet' | grep -v inet6 | grep -vE '127\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | grep -oE '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}' | head -1)
+  IP=$(curl 'https://api.ipify.org')
   echo "It done!"
   echo "Configuration Database/User: http://$IP/install.php"
   echo "phpMyAdmin: http://$IP/phpmyadmin"
