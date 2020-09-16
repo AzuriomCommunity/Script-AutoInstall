@@ -114,7 +114,7 @@ function script() {
   aptupdate
   aptinstall
   aptinstall_apache2
-  aptinstall_mysql
+  aptinstall_$database
   aptinstall_php
   aptinstall_phpmyadmin
   install_composer
@@ -143,6 +143,60 @@ function installQuestions() {
     PHP="7.4"
     ;;
   esac
+  echo "Which type of database ?"
+  echo "   1) MySQL"
+  echo "   2) MariaDB"
+  echo "   3) SQLite"
+  until [[ "$DATABASE" =~ ^[1-3]$ ]]; do
+    read -rp "Version [1-3]: " -e -i 1 DATABASE
+  done
+  case $DATABASE in
+  1)
+    database="mysql"
+    ;;
+  2)
+    database="mariadb"
+    ;;
+  3)
+    database="sqlite"
+    ;;
+  esac
+  if [[ "$database" =~ (mysql) ]]; then
+  echo "Which version of MySQL ?"
+  echo "   1) MySQL 5.7"
+  echo "   2) MySQL 8.0"
+  until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
+    read -rp "Version [1-2]: " -e -i 2 DATABASE_VER
+  done
+  case $DATABASE_VER in
+  1)
+    database_ver="5.7"
+    ;;
+  2)
+    database_ver="8.0"
+    ;;
+  esac
+  fi
+  if [[ "$database" =~ (mariadb) ]]; then
+  echo "Which version of MySQL ?"
+  echo "${yellow}   1) MariaDB 10.3 (Old Stable)${normal}"
+  echo "${yellow}   2) MariaDB 10.4 (Old Stable)${normal}"
+  echo "${green}   3) MariaDB 10.5 (Stable)${normal}"
+  until [[ "$DATABASE_VER" =~ ^[1-3]$ ]]; do
+    read -rp "Version [1-3]: " -e -i 3 DATABASE_VER
+  done
+  case $DATABASE_VER in
+  1)
+    database_ver="10.3"
+    ;;
+  2)
+    database_ver="10.4"
+    ;;
+  3)
+    database_ver="10.5"
+    ;;
+  esac
+  fi
   echo ""
   echo "We are ready to start the installation !"
   APPROVE_INSTALL=${APPROVE_INSTALL:-n}
@@ -167,54 +221,98 @@ function aptinstall_apache2() {
   service apache2 restart
 }
 
+function aptinstall_mariadb() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
+    echo "MariaDB Installation"
+	apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    if [[ "$VERSION_ID" == "9" ]]; then
+      echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian stretch main" >/etc/apt/sources.list.d/mariadb.list
+      apt-get update
+      apt install mariadb-server -y
+      systemctl enable mariadb && systemctl start mariadb
+    fi
+    if [[ "$VERSION_ID" == "10" ]]; then
+      echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
+      apt-get update
+      apt install mariadb-server -y
+      systemctl enable mariadb && systemctl start mariadb
+    fi
+    if [[ "$VERSION_ID" == "11" ]]; then
+	  echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
+      apt-get update
+      apt install mariadb-server -y
+      systemctl enable mariadb && systemctl start mariadb
+    fi
+    if [[ "$VERSION_ID" == "16.04" ]]; then
+      echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian xenial main" >/etc/apt/sources.list.d/mariadb.list
+      apt-get update
+      apt install mariadb-server -y
+      systemctl enable mariadb && systemctl start mariadb
+    fi
+    if [[ "$VERSION_ID" == "18.04" ]]; then
+      echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian bionic main" >/etc/apt/sources.list.d/mariadb.list
+      apt-get update
+      apt install mariadb-server -y
+      systemctl enable mariadb && systemctl start mariadb
+    fi
+    if [[ "$VERSION_ID" == "20.04" ]]; then
+      echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian focal main" >/etc/apt/sources.list.d/mariadb.list
+      apt-get update
+      apt install mariadb-server -y
+      systemctl enable mariadb && systemctl start mariadb
+    fi
+  fi
+}
+
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
+    if [[ "$database_ver" == "8.0" ]]; then
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
+    fi
     if [[ "$VERSION_ID" == "9" ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ stretch mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/debian/ stretch mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "10" ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ buster mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
-      # not available right now
-      echo "deb http://repo.mysql.com/apt/debian/ buster mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "16.04" ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ xenial mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/ubuntu/ xenial mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "18.04" ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ bionic mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/ubuntu/ bionic mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
     if [[ "$VERSION_ID" == "20.04" ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ focal mysql-8.0" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ focal mysql-8.0" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb http://repo.mysql.com/apt/ubuntu/ focal mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/ubuntu/ focal mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install --allow-unauthenticated mysql-server mysql-client -y
@@ -244,7 +342,6 @@ function aptinstall_php() {
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
-      # not available right now
       echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP php$PHP-bcmath php$PHP-json php$PHP-mbstring php$PHP-common php$PHP-xml php$PHP-curl php$PHP-gd php$PHP-zip php$PHP-mysql php$PHP-sqlite -y
@@ -365,6 +462,7 @@ function setupdone() {
   echo "It done!"
   echo "Configuration Database/User: http://$IP/install.php"
   echo "phpMyAdmin: http://$IP/phpmyadmin"
+  echo "For the moment, If you choose to use MariaDB, you will need to execute ${cyan}mysql_secure_installation${normal} for setting the password"
 }
 function manageMenu() {
   clear
