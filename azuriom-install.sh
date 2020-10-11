@@ -3,7 +3,7 @@
 # [Automatic installation on Linux for Azurium]
 #
 # GitHub : https://github.com/MaximeMichaud/Azuriom-install
-# URL : https://azuriom.com/
+# URL : https://azuriom.com
 #
 # This script is intended for a quick and easy installation :
 # wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
@@ -24,7 +24,7 @@
 #   copies or substantial portions of the Software.
 #
 #################################################################################
-#Couleurs
+#Colors
 black=$(tput setaf 0)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
