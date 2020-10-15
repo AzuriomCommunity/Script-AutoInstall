@@ -162,40 +162,40 @@ function installQuestions() {
     ;;
   esac
   if [[ "$database" =~ (mysql) ]]; then
-  echo "Which version of MySQL ?"
-  echo "   1) MySQL 5.7"
-  echo "   2) MySQL 8.0"
-  until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
-    read -rp "Version [1-2]: " -e -i 2 DATABASE_VER
-  done
-  case $DATABASE_VER in
-  1)
-    database_ver="5.7"
-    ;;
-  2)
-    database_ver="8.0"
-    ;;
-  esac
+    echo "Which version of MySQL ?"
+    echo "   1) MySQL 5.7"
+    echo "   2) MySQL 8.0"
+    until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
+      read -rp "Version [1-2]: " -e -i 2 DATABASE_VER
+    done
+    case $DATABASE_VER in
+    1)
+      database_ver="5.7"
+      ;;
+    2)
+      database_ver="8.0"
+      ;;
+    esac
   fi
   if [[ "$database" =~ (mariadb) ]]; then
-  echo "Which version of MySQL ?"
-  echo "${yellow}   1) MariaDB 10.3 (Old Stable)${normal}"
-  echo "${yellow}   2) MariaDB 10.4 (Old Stable)${normal}"
-  echo "${green}   3) MariaDB 10.5 (Stable)${normal}"
-  until [[ "$DATABASE_VER" =~ ^[1-3]$ ]]; do
-    read -rp "Version [1-3]: " -e -i 3 DATABASE_VER
-  done
-  case $DATABASE_VER in
-  1)
-    database_ver="10.3"
-    ;;
-  2)
-    database_ver="10.4"
-    ;;
-  3)
-    database_ver="10.5"
-    ;;
-  esac
+    echo "Which version of MySQL ?"
+    echo "${yellow}   1) MariaDB 10.3 (Old Stable)${normal}"
+    echo "${yellow}   2) MariaDB 10.4 (Old Stable)${normal}"
+    echo "${green}   3) MariaDB 10.5 (Stable)${normal}"
+    until [[ "$DATABASE_VER" =~ ^[1-3]$ ]]; do
+      read -rp "Version [1-3]: " -e -i 3 DATABASE_VER
+    done
+    case $DATABASE_VER in
+    1)
+      database_ver="10.3"
+      ;;
+    2)
+      database_ver="10.4"
+      ;;
+    3)
+      database_ver="10.5"
+      ;;
+    esac
   fi
   echo ""
   echo "We are ready to start the installation !"
@@ -224,7 +224,7 @@ function aptinstall_apache2() {
 function aptinstall_mariadb() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MariaDB Installation"
-	apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
+    apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian stretch main" >/etc/apt/sources.list.d/mariadb.list
       apt-get update
@@ -238,7 +238,7 @@ function aptinstall_mariadb() {
       systemctl enable mariadb && systemctl start mariadb
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
-	  echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
+      echo "deb [arch=amd64] https://mirrors.gethosted.online/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
       apt-get update
       apt install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
@@ -268,7 +268,7 @@ function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
     if [[ "$database_ver" == "8.0" ]]; then
-    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
+      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" == "9" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
@@ -381,7 +381,7 @@ function aptinstall_phpmyadmin() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     mkdir /usr/share/phpmyadmin/ || exit
     cd /usr/share/phpmyadmin/ || exit
-	PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
+    PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
     wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
     mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
@@ -410,12 +410,12 @@ function install_azuriom() {
   mkdir /var/www/html
   cd /var/www/html || exit
   #AZURIOM_VER="$(
-	#git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
-		#| cut -d/ -f3 \
-		#| grep -vE -- '-rc|-b' \
-		#| sed -E 's/^v//' \
-		#| sort -V \
-		#| tail -1 )"
+  #git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
+  #| cut -d/ -f3 \
+  #| grep -vE -- '-rc|-b' \
+  #| sed -E 's/^v//' \
+  #| sort -V \
+  #| tail -1 )"
   #wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
   #unzip -q Azuriom-$AZURIOM_VER.zip
   #rm -rf Azuriom-$AZURIOM_VER.zip
@@ -429,7 +429,7 @@ function install_azuriom() {
 function install_cron() {
   cd /var/www/html || exit
   apt install cron -y
-  crontab -l > cron
+  crontab -l >cron
   wget -O cron https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
   crontab cron
   rm cron
