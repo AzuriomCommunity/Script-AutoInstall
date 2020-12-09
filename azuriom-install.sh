@@ -133,8 +133,8 @@ function installQuestions() {
   echo "${green}   1) PHP 7.3 "
   echo "   2) PHP 7.4 ${normal}"
   echo "   3) PHP 8 (recommended) ${normal}${cyan}"
-  until [[ "$PHP_VERSION" =~ ^[1-2]$ ]]; do
-    read -rp "Version [1-2]: " -e -i 2 PHP_VERSION
+  until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
+    read -rp "Version [1-3]: " -e -i 3 PHP_VERSION
   done
   case $PHP_VERSION in
   1)
