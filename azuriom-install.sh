@@ -130,7 +130,7 @@ function installQuestions() {
   echo ""
   echo "${cyan}Which Version of PHP ?"
   echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
-  echo "${green}   1) PHP 7.3 "
+  echo "${yellow}   1) PHP 7.3 "
   echo "   2) PHP 7.4 ${normal}"
   echo "   3) PHP 8 (recommended) ${normal}${cyan}"
   until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
