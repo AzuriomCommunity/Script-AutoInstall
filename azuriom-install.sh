@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# [Automatic installation on Linux for Azurium]
+# [Automatic installation on Linux for Azuriom]
 #
 # GitHub : https://github.com/MaximeMichaud/Azuriom-install
 # URL : https://azuriom.com
