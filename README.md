@@ -6,7 +6,7 @@
 [![French Version](https://img.shields.io/badge/Version%20fran%C3%A7aise-Ici-blue)](https://github.com/MaximeMichaud/Azuriom-install/blob/master/README-fr.md)
 ## Usage
 ```sh
-wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
+curl -O https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
 chmod +x azuriom-install.sh
 ./azuriom-install.sh
 ```
