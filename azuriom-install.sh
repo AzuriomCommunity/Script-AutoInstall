@@ -274,15 +274,15 @@ function aptinstall_mysql() {
     if [[ "$database_ver" == "8.0" ]]; then
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
-    if [[ "$VERSION_ID" == "9" ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ stretch mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ stretch mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
+    if [[ "$VERSION_ID" =~ (9|10) ]]; then
+      echo "deb http://repo.mysql.com/apt/debian/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/debian/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
-    if [[ "$VERSION_ID" == "10" ]]; then
+	if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
@@ -290,33 +290,9 @@ function aptinstall_mysql() {
       apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
-    if [[ "$VERSION_ID" == "11" ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-    if [[ "$VERSION_ID" == "16.04" ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ xenial mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ xenial mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-    if [[ "$VERSION_ID" == "18.04" ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ bionic mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ bionic mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-    if [[ "$VERSION_ID" == "20.04" ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ focal mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ focal mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
+    if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
+      echo "deb http://repo.mysql.com/apt/ubuntu/ (lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/ubuntu/ (lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update
       apt-get install mysql-server mysql-client -y
@@ -329,7 +305,7 @@ function aptinstall_php() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "PHP Installation"
     wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
-    if [[ "$VERSION_ID" =~ (9|10|11) ]]; then
+    if [[ "$VERSION_ID" =~ (9|10) ]]; then
       echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
       apt-get update >/dev/null
       apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
@@ -337,7 +313,15 @@ function aptinstall_php() {
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
-    if [[ "$VERSION_ID" =~ (18.04|18.04|20.04) ]]; then
+	if [[ "$VERSION_ID" == "11" ]]; then
+      echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
+      apt-get update >/dev/null
+      apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+      systemctl restart apache2
+    fi
+    if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
       add-apt-repository -y ppa:ondrej/php
       apt-get update >/dev/null
       apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
