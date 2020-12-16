@@ -210,19 +210,25 @@ function installQuestions() {
 }
 
 function aptupdate() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
   apt-get update
+  fi
 }
 function aptinstall() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
   apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
+  fi
 }
 
 function aptinstall_apache2() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
   apt-get install -y apache2
   a2enmod rewrite
   wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/000-default.conf
   mv 000-default.conf /etc/apache2/sites-available/
   rm -rf 000-default.conf
   service apache2 restart
+  fi
 }
 
 function aptinstall_mariadb() {
@@ -231,20 +237,17 @@ function aptinstall_mariadb() {
     apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
     if [[ "$VERSION_ID" =~ (9|10) ]]; then
       echo "deb [arch=amd64] https://ftp.igh.cnrs.fr/pub/mariadb/repo/$database_ver/debian $(lsb_release -sc) main" >/etc/apt/sources.list.d/mariadb.list
-      apt-get update
-      apt-get install mariadb-server -y
+      apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb [arch=amd64] https://ftp.igh.cnrs.fr/pub/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
-      apt-get update
-      apt-get install mariadb-server -y
+      apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
     fi
     if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
       echo "deb [arch=amd64] https://ftp.igh.cnrs.fr/pub/mariadb/repo/$database_ver/ubuntu $(lsb_release -sc) main" >/etc/apt/sources.list.d/mariadb.list
-      apt-get update
-      apt-get install mariadb-server -y
+      apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
     fi
   fi
@@ -256,28 +259,11 @@ function aptinstall_mysql() {
     if [[ "$database_ver" == "8.0" ]]; then
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
-    if [[ "$VERSION_ID" =~ (9|10) ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
+    if [[ "$VERSION_ID" =~ (9|10|16.04|18.04|20.04) ]]; then
+      echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
+      echo "deb-src http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-	if [[ "$VERSION_ID" == "11" ]]; then
-      echo "deb http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install mysql-server mysql-client -y
-      systemctl enable mysql && systemctl start mysql
-    fi
-    if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
-      echo "deb http://repo.mysql.com/apt/ubuntu/ (lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/ubuntu/ (lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
-      apt-get update
-      apt-get install mysql-server mysql-client -y
+      apt-get update && apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
   fi
@@ -289,24 +275,21 @@ function aptinstall_php() {
     wget -q https://packages.sury.org/php/apt.gpg -O- | apt-key add -
     if [[ "$VERSION_ID" =~ (9|10) ]]; then
       echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-      apt-get update >/dev/null
-      apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
 	if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
-      apt-get update >/dev/null
-      apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
       add-apt-repository -y ppa:ondrej/php
-      apt-get update >/dev/null
-      apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
