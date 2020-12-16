@@ -6,7 +6,7 @@
 # URL : https://azuriom.com
 #
 # This script is intended for a quick and easy installation :
-# wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
+# curl -O https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
 # chmod +x azuriom-install.sh
 # ./azuriom-install.sh
 #
@@ -250,7 +250,7 @@ function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
     if [[ "$database_ver" == "8.0" ]]; then
-      wget -O /etc/mysql/mysql.conf.d/default-auth-override.cnf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf
+	  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" =~ (9|10|16.04|18.04|20.04) ]]; then
       echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
@@ -300,20 +300,17 @@ function aptinstall_php() {
 function aptinstall_phpmyadmin() {
   echo "phpMyAdmin Installation"
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    mkdir /usr/share/phpmyadmin/ || exit
-    cd /usr/share/phpmyadmin/ || exit
     PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
-    wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-    tar xzf phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-    mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-    rm /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-    rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-    # Create TempDir
+    mkdir /usr/share/phpmyadmin/ || exit
+	wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+    tar xzf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
+    rm -f /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
+    # Create phpMyAdmin TempDir
     mkdir /usr/share/phpmyadmin/tmp || exit
     chown www-data:www-data /usr/share/phpmyadmin/tmp
     chmod 700 /usr/share/phpmyadmin/tmp
     randomBlowfishSecret=$(openssl rand -base64 32)
-    sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
+    sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/phpmyadmin.conf
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
     mv phpmyadmin.conf /etc/apache2/sites-available/
@@ -327,9 +324,12 @@ function aptinstall_phpmyadmin() {
 }
 
 function install_azuriom() {
-  rm -rf /var/www/html/
-  mkdir /var/www/html
-  cd /var/www/html || exit
+  rm -rf /var/www/html/*
+  wget https://azuriom.com/storage/AzuriomInstaller.zip -O /var/www/html/AzuriomInstaller.zip
+  unzip -o /var/www/html/AzuriomInstaller.zip -d /var/www/html/
+  rm -r /var/www/html/AzuriomInstaller.zip
+  chmod -R 755 /var/www/html
+  chown -R www-data:www-data /var/www/html
   #AZURIOM_VER="$(
   #git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
   #| cut -d/ -f3 \
@@ -340,20 +340,17 @@ function install_azuriom() {
   #wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
   #unzip -q Azuriom-$AZURIOM_VER.zip
   #rm -rf Azuriom-$AZURIOM_VER.zip
-  wget https://azuriom.com/storage/AzuriomInstaller.zip
-  unzip AzuriomInstaller.zip
-  rm -rf AzuriomInstaller.zip
-  chmod -R 755 /var/www/html
-  chown -R www-data:www-data /var/www/html
 }
 
 function install_cron() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
   cd /var/www/html || exit
   apt-get install cron -y
   crontab -l >cron
   wget -O cron https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
   crontab cron
   rm cron
+  fi
 }
 
 function install_composer() {
@@ -366,16 +363,17 @@ function mod_cloudflare() {
   #disabled for the moment
   a2enmod remoteip
   cd /etc/apache2 || exit
-  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/apache2.conf
-  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/000-default.conf
-  cd /etc/apache2/conf-available || exit
-  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/remoteip.conf
+  wget -O /etc/apache2/apache2.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/apache2.conf
+  wget -O /etc/apache2/000-default.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/000-default.conf
+  wget -O /etc/apache2/conf-available/remoteip.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cloudflare/remoteip.conf
   systemctl restart apache2
 }
 
 function autoUpdate() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
   echo "Enable Automatic Updates..."
   apt-get install -y unattended-upgrades
+  fi
 }
 
 function setupdone() {
@@ -431,26 +429,25 @@ function update() {
 }
 
 function updatephpMyAdmin() {
-  rm -rf /usr/share/phpmyadmin/
-  mkdir /usr/share/phpmyadmin/
+  rm -rf /usr/share/phpmyadmin/*
   cd /usr/share/phpmyadmin/ || exit
-  wget https://www.phpmyadmin.net/downloads/phpMyAdmin-latest-all-languages.zip
-  unzip phpMyAdmin-latest-all-languages.zip
+  wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  tar xzf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
+  rm -f /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
   PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
   mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-  rm /usr/share/phpmyadmin/phpMyAdmin-latest-all-languages.zip
-  rm -rf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
+  rm /usr/share/phpmyadmin/phpMyAdmin-latest-all-languages.tar
   # Create TempDir
   mkdir /usr/share/phpmyadmin/tmp || exit
   chown www-data:www-data /usr/share/phpmyadmin/tmp
   chmod 700 /var/www/phpmyadmin/tmp
   randomBlowfishSecret=$(openssl rand -base64 32)
-  sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" config.sample.inc.php >config.inc.php
+  sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
 }
 
 initialCheck
 
-if [[ -e /var/www/html/app/ ]]; then
+if [[ -e /var/www/html/public/ ]]; then
   manageMenu
 else
   script
