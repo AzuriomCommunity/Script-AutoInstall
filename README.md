@@ -30,7 +30,7 @@ This script supports the following Linux distributions:
 ## Supports
 * MySQL 5.7 - 8.0 & MariaDB 10.3 - 10.5
 * PHP 7.3 to 8.0
-* phpMyAdmin 5.0.4
+* phpMyAdmin 5.1.0
 ## To-Do
 https://github.com/MaximeMichaud/Azuriom-install/projects/1/
 ## DOCUMENTATION
