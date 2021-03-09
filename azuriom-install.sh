@@ -10,7 +10,7 @@
 # chmod +x azuriom-install.sh
 # ./azuriom-install.sh
 #
-# Azuriom-install Copyright (c) 2020 Maxime Michaud
+# Azuriom-install Copyright (c) 2020-2021 Maxime Michaud
 # Licensed under MIT License
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a copy
