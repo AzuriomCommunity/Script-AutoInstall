@@ -128,21 +128,21 @@ function installQuestions() {
   echo ""
   echo "${cyan}Which Version of PHP ?"
   echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
-  echo "${yellow}   1) PHP 7.3 "
+  echo "   1) PHP 8 (recommended) ${normal}${cyan}"
   echo "   2) PHP 7.4 ${normal}"
-  echo "   3) PHP 8 (recommended) ${normal}${cyan}"
+  echo "${yellow}   3) PHP 7.3 "
   until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
-    read -rp "Version [1-3]: " -e -i 3 PHP_VERSION
+    read -rp "Version [1-3]: " -e -i 1 PHP_VERSION
   done
   case $PHP_VERSION in
   1)
-    PHP="7.3"
+    PHP="8.0"
     ;;
   2)
     PHP="7.4"
     ;;
   3)
-    PHP="8.0"
+    PHP="7.3"
     ;;
   esac
   echo "Which type of database ?"
