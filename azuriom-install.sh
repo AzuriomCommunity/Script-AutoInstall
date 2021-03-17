@@ -88,8 +88,6 @@ function checkOS() {
         fi
       fi
     fi
-  elif [[ -e /etc/fedora-release ]]; then
-    OS=fedora
   elif [[ -e /etc/centos-release ]]; then
     if ! grep -qs "^CentOS Linux release 7" /etc/centos-release; then
       echo "${alert}Your version of CentOS is not supported.${normal}"
@@ -104,7 +102,7 @@ function checkOS() {
       fi
     fi
   else
-    echo "Looks like you aren't running this script on a Debian, Ubuntu, Fedora or CentOS system ${normal}"
+    echo "Looks like you aren't running this script on a Debian, Ubuntu or CentOS system ${normal}"
     exit 1
   fi
 }
@@ -316,9 +314,7 @@ function aptinstall_phpmyadmin() {
     mv phpmyadmin.conf /etc/apache2/sites-available/
     a2ensite phpmyadmin
     systemctl restart apache2
-  elif [[ "$OS" =~ (centos|amzn) ]]; then
-    echo "No Support"
-  elif [[ "$OS" == "fedora" ]]; then
+  elif [[ "$OS" == "centos" ]]; then
     echo "No Support"
   fi
 }
