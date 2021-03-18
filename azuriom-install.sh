@@ -10,7 +10,7 @@
 # chmod +x azuriom-install.sh
 # ./azuriom-install.sh
 #
-# Azuriom-install Copyright (c) 2020 Maxime Michaud
+# Azuriom-install Copyright (c) 2020-2021 Maxime Michaud
 # Licensed under MIT License
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -88,8 +88,6 @@ function checkOS() {
         fi
       fi
     fi
-  elif [[ -e /etc/fedora-release ]]; then
-    OS=fedora
   elif [[ -e /etc/centos-release ]]; then
     if ! grep -qs "^CentOS Linux release 7" /etc/centos-release; then
       echo "${alert}Your version of CentOS is not supported.${normal}"
@@ -104,7 +102,7 @@ function checkOS() {
       fi
     fi
   else
-    echo "Looks like you aren't running this script on a Debian, Ubuntu, Fedora or CentOS system ${normal}"
+    echo "Looks like you aren't running this script on a Debian, Ubuntu or CentOS system ${normal}"
     exit 1
   fi
 }
@@ -130,36 +128,36 @@ function installQuestions() {
   echo ""
   echo "${cyan}Which Version of PHP ?"
   echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
-  echo "${yellow}   1) PHP 7.3 "
+  echo "   1) PHP 8 (recommended) ${normal}${cyan}"
   echo "   2) PHP 7.4 ${normal}"
-  echo "   3) PHP 8 (recommended) ${normal}${cyan}"
+  echo "${yellow}   3) PHP 7.3 "
   until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
-    read -rp "Version [1-3]: " -e -i 3 PHP_VERSION
+    read -rp "Version [1-3]: " -e -i 1 PHP_VERSION
   done
   case $PHP_VERSION in
   1)
-    PHP="7.3"
+    PHP="8.0"
     ;;
   2)
     PHP="7.4"
     ;;
   3)
-    PHP="8.0"
+    PHP="7.3"
     ;;
   esac
   echo "Which type of database ?"
-  echo "   1) MySQL"
-  echo "   2) MariaDB"
+  echo "   1) MariaDB"
+  echo "   2) MySQL"
   echo "   3) SQLite"
   until [[ "$DATABASE" =~ ^[1-3]$ ]]; do
     read -rp "Version [1-3]: " -e -i 1 DATABASE
   done
   case $DATABASE in
   1)
-    database="mysql"
+    database="mariadb"
     ;;
   2)
-    database="mariadb"
+    database="mysql"
     ;;
   3)
     database="sqlite"
@@ -167,37 +165,37 @@ function installQuestions() {
   esac
   if [[ "$database" =~ (mysql) ]]; then
     echo "Which version of MySQL ?"
-    echo "   1) MySQL 5.7"
-    echo "   2) MySQL 8.0"
+    echo "   1) MySQL 8.0"
+    echo "   2) MySQL 5.7"
     until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
-      read -rp "Version [1-2]: " -e -i 2 DATABASE_VER
+      read -rp "Version [1-2]: " -e -i 1 DATABASE_VER
     done
     case $DATABASE_VER in
     1)
-      database_ver="5.7"
+      database_ver="8.0"
       ;;
     2)
-      database_ver="8.0"
+      database_ver="5.7"
       ;;
     esac
   fi
   if [[ "$database" =~ (mariadb) ]]; then
-    echo "Which version of MySQL ?"
-    echo "${yellow}   1) MariaDB 10.3 (Old Stable)${normal}"
+    echo "Which version of MariaDB ?"
+    echo "${green}   1) MariaDB 10.5 (Stable)${normal}"
     echo "${yellow}   2) MariaDB 10.4 (Old Stable)${normal}"
-    echo "${green}   3) MariaDB 10.5 (Stable)${normal}"
+    echo "${yellow}   2) MariaDB 10.3 (Old Stable)${normal}"
     until [[ "$DATABASE_VER" =~ ^[1-3]$ ]]; do
-      read -rp "Version [1-3]: " -e -i 3 DATABASE_VER
+      read -rp "Version [1-3]: " -e -i 1 DATABASE_VER
     done
     case $DATABASE_VER in
     1)
-      database_ver="10.3"
+      database_ver="10.5"
       ;;
     2)
       database_ver="10.4"
       ;;
     3)
-      database_ver="10.5"
+      database_ver="10.3"
       ;;
     esac
   fi
@@ -316,9 +314,7 @@ function aptinstall_phpmyadmin() {
     mv phpmyadmin.conf /etc/apache2/sites-available/
     a2ensite phpmyadmin
     systemctl restart apache2
-  elif [[ "$OS" =~ (centos|amzn) ]]; then
-    echo "No Support"
-  elif [[ "$OS" == "fedora" ]]; then
+  elif [[ "$OS" == "centos" ]]; then
     echo "No Support"
   fi
 }
@@ -431,12 +427,10 @@ function update() {
 function updatephpMyAdmin() {
   rm -rf /usr/share/phpmyadmin/*
   cd /usr/share/phpmyadmin/ || exit
+  PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
   wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
   tar xzf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
-  rm -f /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
-  PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
-  mv phpMyAdmin-$PHPMYADMIN_VER-all-languages/* /usr/share/phpmyadmin
-  rm /usr/share/phpmyadmin/phpMyAdmin-latest-all-languages.tar
+  rm -f /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
   # Create TempDir
   mkdir /usr/share/phpmyadmin/tmp || exit
   chown www-data:www-data /usr/share/phpmyadmin/tmp
