@@ -221,8 +221,25 @@ function aptinstall_apache2() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     apt-get install -y apache2
     a2enmod rewrite
-    wget -O /etc/apache2/sites-available/000-default.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/000-default.conf
+    wget -O /etc/apache2/sites-available/000-default.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/000-default.conf
     service apache2 restart
+  fi
+}
+
+function aptinstall_nginx() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
+    apt-key adv --fetch-keys 'https://nginx.org/keys/nginx_signing.key'
+    echo "deb https://nginx.org/packages/mainline/debian/ $(lsb_release -sc) nginx" >/etc/apt/sources.list.d/nginx.list
+    echo "deb-src https://nginx.org/packages/mainline/debian/ $(lsb_release -sc) nginx" >>/etc/apt/sources.list.d/nginx.list
+	apt-get update && apt-get install nginx -y
+	systemctl enable nginx && systemctl start nginx
+	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/nginx.conf -O /etc/nginx/nginx.conf
+	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/general.conf -O /etc/nginx/globals/general.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/security.conf -O /etc/nginx/globals/security.conf 
+	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/php_fastcgi.conf -O /etc/nginx/globals/php_fastcgi.conf
+	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/letsencrypt.conf -O /etc/nginx/globals/letsencrypt.conf
+	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/cloudflare-ip-list.conf -O /etc/nginx/globals/cloudflare-ip-list.conf
+	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/azuriom.conf -O /etc/nginx/globals/azuriom.conf
   fi
 }
 
@@ -249,7 +266,7 @@ function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
     if [[ "$database_ver" == "8.0" ]]; then
-      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
+      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" =~ (9|10|16.04|18.04|20.04) ]]; then
       echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
@@ -315,7 +332,7 @@ function aptinstall_phpmyadmin() {
     chmod 700 /usr/share/phpmyadmin/tmp
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
-    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/phpmyadmin.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
     mv phpmyadmin.conf /etc/apache2/sites-available/
     a2ensite phpmyadmin
