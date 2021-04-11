@@ -107,11 +107,13 @@ function script() {
   aptupdate
   aptinstall
   aptinstall_apache2
+  #aptinstall_$webserver
   aptinstall_"$database"
   aptinstall_php
   aptinstall_phpmyadmin
   install_composer
   install_azuriom
+  autoUpdate
   setupdone
 
 }
@@ -123,9 +125,9 @@ function installQuestions() {
   echo ""
   echo "${cyan}Which Version of PHP ?"
   echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
-  echo "   1) PHP 8 (recommended) ${normal}${cyan}"
+  echo "   1) PHP 8 (recommended) ${normal}"
   echo "   2) PHP 7.4 ${normal}"
-  echo "${yellow}   3) PHP 7.3 "
+  echo "${yellow}   3) PHP 7.3 ${normal}${cyan}"
   until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
     read -rp "Version [1-3]: " -e -i 1 PHP_VERSION
   done
@@ -143,7 +145,7 @@ function installQuestions() {
   echo "Which type of database ?"
   echo "   1) MariaDB"
   echo "   2) MySQL"
-  echo "   3) SQLite"
+  echo "   3) SQLite (for dev)"
   until [[ "$DATABASE" =~ ^[1-3]$ ]]; do
     read -rp "Version [1-3]: " -e -i 1 DATABASE
   done
@@ -160,8 +162,8 @@ function installQuestions() {
   esac
   if [[ "$database" =~ (mysql) ]]; then
     echo "Which version of MySQL ?"
-    echo "   1) MySQL 8.0"
-    echo "   2) MySQL 5.7"
+    echo "${green}   1) MySQL 8.0 ${normal}"
+    echo "${red}   2) MySQL 5.7 ${normal}${cyan}"
     until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
       read -rp "Version [1-2]: " -e -i 1 DATABASE_VER
     done
@@ -178,7 +180,7 @@ function installQuestions() {
     echo "Which version of MariaDB ?"
     echo "${green}   1) MariaDB 10.5 (Stable)${normal}"
     echo "${yellow}   2) MariaDB 10.4 (Old Stable)${normal}"
-    echo "${yellow}   2) MariaDB 10.3 (Old Stable)${normal}"
+    echo "${yellow}   2) MariaDB 10.3 (Old Stable)${normal}${cyan}"
     until [[ "$DATABASE_VER" =~ ^[1-3]$ ]]; do
       read -rp "Version [1-3]: " -e -i 1 DATABASE_VER
     done
@@ -205,11 +207,13 @@ function installQuestions() {
 function aptupdate() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     apt-get update
+  elif [[ "$OS" == "centos" ]]; then
+    echo "No Support"
   fi
 }
 function aptinstall() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
+    apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl wget
   fi
 }
 
@@ -235,6 +239,8 @@ function aptinstall_mariadb() {
       echo "deb [arch=amd64] https://ftp.igh.cnrs.fr/pub/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
       apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
+    elif [[ "$OS" == "centos" ]]; then
+      echo "No Support"
     fi
   fi
 }
@@ -258,6 +264,8 @@ function aptinstall_mysql() {
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update && apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
+    elif [[ "$OS" == "centos" ]]; then
+      echo "No Support"
     fi
   fi
 }
@@ -271,6 +279,7 @@ function aptinstall_php() {
       apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
@@ -278,6 +287,7 @@ function aptinstall_php() {
       apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
     if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
@@ -285,6 +295,7 @@ function aptinstall_php() {
       apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+      sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
   fi
@@ -345,9 +356,11 @@ function install_cron() {
 }
 
 function install_composer() {
-  curl -sS https://getcomposer.org/installer | php
-  mv composer.phar /usr/local/bin/composer
-  chmod +x /usr/local/bin/composer
+  if [[ "$OS" =~ (debian|ubuntu|centos) ]]; then
+    curl -sS https://getcomposer.org/installer | php
+    mv composer.phar /usr/local/bin/composer
+    chmod +x /usr/local/bin/composer
+  fi
 }
 
 function mod_cloudflare() {
@@ -367,12 +380,28 @@ function autoUpdate() {
   fi
 }
 
+#function autoUpdate() {
+#if [[ "$OS" =~ (debian|ubuntu) ]]; then
+#Disable for the moment
+#echo "Enable Automatic Updates..."
+#apt-get install -y unattended-upgrades
+#fi
+#}
+function autoUpdate() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
+    echo "Enable Automatic Updates..."
+    apt-get install -y unattended-upgrades
+  elif [[ "$OS" == "centos" ]]; then
+    echo "No Support"
+  fi
+}
+
 function setupdone() {
   IP=$(curl 'https://api.ipify.org')
-  echo "It done!"
-  echo "Configuration Database/User: http://$IP/install.php"
-  echo "phpMyAdmin: http://$IP/phpmyadmin"
-  echo "For the moment, If you choose to use MariaDB, you will need to execute ${cyan}mysql_secure_installation${normal} for setting the password"
+  echo "${cyan}It done!"
+  echo "${cyan}Configuration Database/User: ${red}http://$IP/install.php"
+  echo "${cyan}phpMyAdmin: ${red}http://$IP/phpmyadmin"
+  echo "${cyan}For the moment, If you choose to use MariaDB, you will need to execute ${normal}${on_red}${white}mysql_secure_installation${normal}${cyan} for setting the password"
 }
 function manageMenu() {
   clear
