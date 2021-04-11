@@ -25,19 +25,14 @@
 #
 #################################################################################
 #Colors
-black=$(tput setaf 0)
 red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
 cyan=$(tput setaf 6)
 white=$(tput setaf 7)
-bold=$(tput bold)
-standout=$(tput smso)
 normal=$(tput sgr0)
 alert=${white}${on_red}
-sub_title=${bold}${yellow}
-repo_title=${black}${on_green}
-message_title=${white}${on_magenta}
+on_red=$(tput setab 1)
 #################################################################################
 function isRoot() {
   if [ "$EUID" -ne 0 ]; then
@@ -112,7 +107,7 @@ function script() {
   aptupdate
   aptinstall
   aptinstall_apache2
-  aptinstall_$database
+  aptinstall_"$database"
   aptinstall_php
   aptinstall_phpmyadmin
   install_composer
@@ -209,21 +204,21 @@ function installQuestions() {
 
 function aptupdate() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-  apt-get update
+    apt-get update
   fi
 }
 function aptinstall() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-  apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
+    apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl
   fi
 }
 
 function aptinstall_apache2() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-  apt-get install -y apache2
-  a2enmod rewrite
-  wget -O /etc/apache2/sites-available/000-default.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/000-default.conf
-  service apache2 restart
+    apt-get install -y apache2
+    a2enmod rewrite
+    wget -O /etc/apache2/sites-available/000-default.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/000-default.conf
+    service apache2 restart
   fi
 }
 
@@ -236,7 +231,7 @@ function aptinstall_mariadb() {
       apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
     fi
-	if [[ "$VERSION_ID" == "11" ]]; then
+    if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb [arch=amd64] https://ftp.igh.cnrs.fr/pub/mariadb/repo/$database_ver/debian buster main" >/etc/apt/sources.list.d/mariadb.list
       apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
@@ -248,7 +243,7 @@ function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
     if [[ "$database_ver" == "8.0" ]]; then
-	  wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
+      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" =~ (9|10|16.04|18.04|20.04) ]]; then
       echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
@@ -257,7 +252,7 @@ function aptinstall_mysql() {
       apt-get update && apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     fi
-	if [[ "$VERSION_ID" == "11" ]]; then
+    if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/debian/ buster mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
@@ -278,7 +273,7 @@ function aptinstall_php() {
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
-	if [[ "$VERSION_ID" == "11" ]]; then
+    if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
       apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
@@ -300,9 +295,9 @@ function aptinstall_phpmyadmin() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
     mkdir /usr/share/phpmyadmin/ || exit
-	wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-    tar xzf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
-    rm -f /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages
+    wget https://files.phpmyadmin.net/phpMyAdmin/"$PHPMYADMIN_VER"/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
+    tar xzf /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
+    rm -f /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages
     # Create phpMyAdmin TempDir
     mkdir /usr/share/phpmyadmin/tmp || exit
     chown www-data:www-data /usr/share/phpmyadmin/tmp
@@ -340,12 +335,12 @@ function install_azuriom() {
 
 function install_cron() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-  cd /var/www/html || exit
-  apt-get install cron -y
-  crontab -l >cron
-  wget -O cron https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
-  crontab cron
-  rm cron
+    cd /var/www/html || exit
+    apt-get install cron -y
+    crontab -l >cron
+    wget -O cron https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
+    crontab cron
+    rm cron
   fi
 }
 
@@ -367,8 +362,8 @@ function mod_cloudflare() {
 
 function autoUpdate() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-  echo "Enable Automatic Updates..."
-  apt-get install -y unattended-upgrades
+    echo "Enable Automatic Updates..."
+    apt-get install -y unattended-upgrades
   fi
 }
 
@@ -428,9 +423,9 @@ function updatephpMyAdmin() {
   rm -rf /usr/share/phpmyadmin/*
   cd /usr/share/phpmyadmin/ || exit
   PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
-  wget https://files.phpmyadmin.net/phpMyAdmin/$PHPMYADMIN_VER/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
-  tar xzf /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
-  rm -f /usr/share/phpmyadmin/phpMyAdmin-$PHPMYADMIN_VER-all-languages.tar.gz
+  wget https://files.phpmyadmin.net/phpMyAdmin/"$PHPMYADMIN_VER"/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
+  tar xzf /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
+  rm -f /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
   # Create TempDir
   mkdir /usr/share/phpmyadmin/tmp || exit
   chown www-data:www-data /usr/share/phpmyadmin/tmp
