@@ -142,7 +142,7 @@ function installQuestions() {
     PHP="7.3"
     ;;
   esac
-   echo "Which type of webserver ?"
+  echo "Which type of webserver ?"
   echo "   1) NGINX"
   echo "   2) Apache2"
   until [[ "$WEBSERVER" =~ ^[1-2]$ ]]; do
@@ -261,15 +261,22 @@ function aptinstall_nginx() {
     apt-key adv --fetch-keys 'https://nginx.org/keys/nginx_signing.key'
     echo "deb https://nginx.org/packages/$nginx_branch/$OS/ $(lsb_release -sc) nginx" >/etc/apt/sources.list.d/nginx.list
     echo "deb-src https://nginx.org/packages/$nginx_branch/$OS/ $(lsb_release -sc) nginx" >>/etc/apt/sources.list.d/nginx.list
-	apt-get update && apt-get install nginx -y
-	systemctl enable nginx && systemctl start nginx
-	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/nginx.conf -O /etc/nginx/nginx.conf
-	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/general.conf -O /etc/nginx/globals/general.conf
-    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/security.conf -O /etc/nginx/globals/security.conf 
-	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/php_fastcgi.conf -O /etc/nginx/globals/php_fastcgi.conf
-	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/letsencrypt.conf -O /etc/nginx/globals/letsencrypt.conf
-	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/cloudflare-ip-list.conf -O /etc/nginx/globals/cloudflare-ip-list.conf
-	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/azuriom.conf -O /etc/nginx/globals/azuriom.conf
+    apt-get update && apt-get install nginx -y
+    systemctl enable nginx && systemctl start nginx
+    rm -rf /etc/nginx/conf.d/default.conf
+    mkdir -p /etc/nginx/globals/ || exit
+    mkdir -p /etc/nginx/sites-available/ || exit
+    mkdir -p /etc/nginx/sites-enabled/ || exit
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/nginx.conf -O /etc/nginx/nginx.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/general.conf -O /etc/nginx/globals/general.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/security.conf -O /etc/nginx/globals/security.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/php_fastcgi.conf -O /etc/nginx/globals/php_fastcgi.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/letsencrypt.conf -O /etc/nginx/globals/letsencrypt.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/cloudflare-ip-list.conf -O /etc/nginx/globals/cloudflare-ip-list.conf
+    wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/azuriom.conf -O /etc/nginx/sites-enabled/azuriom.conf
+    service nginx restart
+    # for phpmyadmin temporarily
+    apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
   fi
 }
 
