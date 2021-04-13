@@ -106,8 +106,8 @@ function script() {
   installQuestions
   aptupdate
   aptinstall
-  aptinstall_apache2
-  #aptinstall_$webserver
+  #aptinstall_apache2
+  aptinstall_$webserver
   aptinstall_"$database"
   aptinstall_php
   aptinstall_phpmyadmin
@@ -142,6 +142,36 @@ function installQuestions() {
     PHP="7.3"
     ;;
   esac
+   echo "Which type of webserver ?"
+  echo "   1) NGINX"
+  echo "   2) Apache2"
+  until [[ "$WEBSERVER" =~ ^[1-2]$ ]]; do
+    read -rp "Version [1-2]: " -e -i 1 WEBSERVER
+  done
+  case $WEBSERVER in
+  1)
+    webserver="nginx"
+    ;;
+  2)
+    webserver="apache2"
+    ;;
+  esac
+  if [[ "$webserver" =~ (nginx) ]]; then
+    echo "Which branch of NGINX ?"
+    echo "${green}   1) Mainline ${normal}"
+    echo "${green}   2) Stable ${normal}${cyan}"
+    until [[ "$NGINX_BRANCH" =~ ^[1-2]$ ]]; do
+      read -rp "Version [1-2]: " -e -i 1 NGINX_BRANCH
+    done
+    case $NGINX_BRANCH in
+    1)
+      nginx_branch="mainline"
+      ;;
+    2)
+      nginx_branch="stable"
+      ;;
+    esac
+  fi
   echo "Which type of database ?"
   echo "   1) MariaDB"
   echo "   2) MySQL"
@@ -229,8 +259,8 @@ function aptinstall_apache2() {
 function aptinstall_nginx() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     apt-key adv --fetch-keys 'https://nginx.org/keys/nginx_signing.key'
-    echo "deb https://nginx.org/packages/mainline/debian/ $(lsb_release -sc) nginx" >/etc/apt/sources.list.d/nginx.list
-    echo "deb-src https://nginx.org/packages/mainline/debian/ $(lsb_release -sc) nginx" >>/etc/apt/sources.list.d/nginx.list
+    echo "deb https://nginx.org/packages/$nginx_branch/$OS/ $(lsb_release -sc) nginx" >/etc/apt/sources.list.d/nginx.list
+    echo "deb-src https://nginx.org/packages/$nginx_branch/$OS/ $(lsb_release -sc) nginx" >>/etc/apt/sources.list.d/nginx.list
 	apt-get update && apt-get install nginx -y
 	systemctl enable nginx && systemctl start nginx
 	wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/nginx.conf -O /etc/nginx/nginx.conf
