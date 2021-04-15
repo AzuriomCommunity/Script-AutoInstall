@@ -107,9 +107,9 @@ function script() {
   aptupdate
   aptinstall
   #aptinstall_apache2
-  aptinstall_$webserver
-  aptinstall_"$database"
+  aptinstall_"$webserver"
   aptinstall_php
+  aptinstall_"$database"
   aptinstall_phpmyadmin
   install_composer
   install_azuriom
@@ -274,9 +274,6 @@ function aptinstall_nginx() {
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/letsencrypt.conf -O /etc/nginx/globals/letsencrypt.conf
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/cloudflare-ip-list.conf -O /etc/nginx/globals/cloudflare-ip-list.conf
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/azuriom.conf -O /etc/nginx/sites-enabled/azuriom.conf
-    service nginx restart
-    # for phpmyadmin temporarily
-    apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
   fi
 }
 
@@ -324,13 +321,24 @@ function aptinstall_mysql() {
   fi
 }
 
+function aptinstall_sqlite() {
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
+    echo "SQLite Installation"
+    if [[ "$VERSION_ID" =~ (9|10|11|16.04|18.04|20.04) ]]; then
+      apt-get update && apt-get install php$PHP{,-sqlite} -y
+    elif [[ "$OS" == "centos" ]]; then
+      echo "No Support"
+    fi
+  fi
+}
+
 function aptinstall_php() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "PHP Installation"
     curl -sSL -o /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     if [[ "$VERSION_ID" =~ (9|10) ]]; then
       echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
@@ -338,7 +346,7 @@ function aptinstall_php() {
     fi
     if [[ "$VERSION_ID" == "11" ]]; then
       echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
-      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
@@ -346,13 +354,13 @@ function aptinstall_php() {
     fi
     if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
       add-apt-repository -y ppa:ondrej/php
-      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-sqlite} -y
+      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
       sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
       sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
       systemctl restart apache2
     fi
-  fi
+fi
 }
 
 function aptinstall_phpmyadmin() {
