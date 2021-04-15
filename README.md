@@ -28,6 +28,7 @@ This script supports the following Linux distributions:
 | CentOS 7                |❌     |
 | CentOS 8                |❌     |
 ## Supports
+* NGINX 1.19.X & Apache2
 * MySQL 5.7 - 8.0 & MariaDB 10.3 - 10.5
 * PHP 7.3 to 8.0
 * phpMyAdmin 5.1.0

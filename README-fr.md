@@ -27,6 +27,7 @@ Le script supporte ces OS :
 | CentOS 7              |❌     |
 | CentOS 8              |❌     |
 ## Fonctionnalités
+* NGINX 1.19.X & Apache2
 * MySQL 5.7 - 8.0 & MariaDB 10.3 - 10.5
 * PHP 7.3 à 7.4
 * phpMyAdmin 5.1.0
