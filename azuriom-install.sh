@@ -106,9 +106,9 @@ function script() {
   installQuestions
   aptupdate
   aptinstall
+  aptinstall_php
   #aptinstall_apache2
   aptinstall_"$webserver"
-  aptinstall_php
   aptinstall_"$database"
   aptinstall_phpmyadmin
   install_composer
@@ -336,31 +336,62 @@ function aptinstall_php() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "PHP Installation"
     curl -sSL -o /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-    if [[ "$VERSION_ID" =~ (9|10) ]]; then
-      echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
-      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
-      systemctl restart apache2
+    if [[ "$webserver" =~ (nginx) ]]; then
+      if [[ "$VERSION_ID" =~ (9|10) ]]; then
+        echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
+        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+        apt-get remove apache2 -y
+        systemctl restart nginx
+      fi
+      if [[ "$VERSION_ID" == "11" ]]; then
+        echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
+        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
+        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+        apt-get remove apache2 -y
+        systemctl restart nginx
+      fi
+      if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
+        add-apt-repository -y ppa:ondrej/php
+        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
+        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+        apt-get remove apache2 -y
+        systemctl restart nginx
+      fi
     fi
-    if [[ "$VERSION_ID" == "11" ]]; then
-      echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
-      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
-      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
-      systemctl restart apache2
+    if [[ "$webserver" =~ (apache2) ]]; then
+      if [[ "$VERSION_ID" =~ (9|10) ]]; then
+        echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
+        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
+        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
+        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+        systemctl restart apache2
+      fi
+      if [[ "$VERSION_ID" == "11" ]]; then
+        echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
+        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
+        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
+        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+        systemctl restart apache2
+      fi
+      if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
+        add-apt-repository -y ppa:ondrej/php
+        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
+        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
+        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
+        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+        systemctl restart apache2
+      fi
     fi
-    if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
-      add-apt-repository -y ppa:ondrej/php
-      apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
-      sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
-      sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
-      systemctl restart apache2
-    fi
-fi
+  fi
 }
 
 function aptinstall_phpmyadmin() {
@@ -379,15 +410,22 @@ function aptinstall_phpmyadmin() {
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
-    mv phpmyadmin.conf /etc/apache2/sites-available/
-    a2ensite phpmyadmin
-    systemctl restart apache2
+    if [[ "$webserver" =~ (nginx) ]]; then
+      apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
+      service nginx restart
+    elif [[ "$webserver" =~ (apache2) ]]; then
+      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
+      mv phpmyadmin.conf /etc/apache2/sites-available/
+      a2ensite phpmyadmin
+      systemctl restart apache2
+    fi
   elif [[ "$OS" == "centos" ]]; then
     echo "No Support"
   fi
 }
 
 function install_azuriom() {
+  mkdir -p /var/www/html/
   rm -rf /var/www/html/*
   wget https://azuriom.com/storage/AzuriomInstaller.zip -O /var/www/html/AzuriomInstaller.zip
   unzip -o /var/www/html/AzuriomInstaller.zip -d /var/www/html/
