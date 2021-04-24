@@ -480,13 +480,6 @@ function autoUpdate() {
   fi
 }
 
-#function autoUpdate() {
-#if [[ "$OS" =~ (debian|ubuntu) ]]; then
-#Disable for the moment
-#echo "Enable Automatic Updates..."
-#apt-get install -y unattended-upgrades
-#fi
-#}
 function autoUpdate() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "Enable Automatic Updates..."
@@ -521,7 +514,7 @@ function manageMenu() {
   done
   case $MENU_OPTION in
   1)
-    install_azuriom
+    script
     ;;
   2)
     updatephpMyAdmin
