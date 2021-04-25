@@ -274,6 +274,7 @@ function aptinstall_nginx() {
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/letsencrypt.conf -O /etc/nginx/globals/letsencrypt.conf
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/cloudflare-ip-list.conf -O /etc/nginx/globals/cloudflare-ip-list.conf
     wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/nginx/azuriom.conf -O /etc/nginx/sites-enabled/azuriom.conf
+    openssl dhparam -out /etc/nginx/dhparam.pem 2048
   fi
 }
 
