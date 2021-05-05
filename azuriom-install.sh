@@ -104,10 +104,9 @@ function checkOS() {
 
 function script() {
   installQuestions
-  aptupdate
+  update
   aptinstall
   aptinstall_php
-  #aptinstall_apache2
   aptinstall_"$webserver"
   aptinstall_"$database"
   aptinstall_phpmyadmin
@@ -234,13 +233,14 @@ function installQuestions() {
   fi
 }
 
-function aptupdate() {
+function update() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    apt-get update
+    apt-get update && apt-get upgrade -y
   elif [[ "$OS" == "centos" ]]; then
-    echo "No Support"
+    yum -y update
   fi
 }
+
 function aptinstall() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     apt-get -y install ca-certificates apt-transport-https dirmngr zip unzip lsb-release gnupg openssl curl wget
@@ -264,6 +264,7 @@ function aptinstall_nginx() {
     apt-get update && apt-get install nginx -y
     systemctl enable nginx && systemctl start nginx
     rm -rf /etc/nginx/conf.d/default.conf
+    mkdir -p /var/www
     mkdir -p /etc/nginx/globals/ || exit
     mkdir -p /etc/nginx/sites-available/ || exit
     mkdir -p /etc/nginx/sites-enabled/ || exit
@@ -402,7 +403,7 @@ function aptinstall_phpmyadmin() {
     mkdir -p /usr/share/phpmyadmin/ || exit
     wget https://files.phpmyadmin.net/phpMyAdmin/"$PHPMYADMIN_VER"/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
     tar xzf /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
-    rm -f /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages
+    rm -f /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
     # Create phpMyAdmin TempDir
     mkdir -p /usr/share/phpmyadmin/tmp || exit
     chown www-data:www-data /usr/share/phpmyadmin/tmp
@@ -414,34 +415,13 @@ function aptinstall_phpmyadmin() {
       apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
       service nginx restart
     elif [[ "$webserver" =~ (apache2) ]]; then
-      wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
-      mv phpmyadmin.conf /etc/apache2/sites-available/
+      wget -O /etc/apache2/sites-available/ https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
       a2ensite phpmyadmin
       systemctl restart apache2
     fi
   elif [[ "$OS" == "centos" ]]; then
     echo "No Support"
   fi
-}
-
-function install_azuriom() {
-  mkdir -p /var/www/html/
-  rm -rf /var/www/html/*
-  wget https://azuriom.com/storage/AzuriomInstaller.zip -O /var/www/html/AzuriomInstaller.zip
-  unzip -o /var/www/html/AzuriomInstaller.zip -d /var/www/html/
-  rm -r /var/www/html/AzuriomInstaller.zip
-  chmod -R 755 /var/www/html
-  chown -R www-data:www-data /var/www/html
-  #AZURIOM_VER="$(
-  #git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
-  #| cut -d/ -f3 \
-  #| grep -vE -- '-rc|-b' \
-  #| sed -E 's/^v//' \
-  #| sort -V \
-  #| tail -1 )"
-  #wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
-  #unzip -q Azuriom-$AZURIOM_VER.zip
-  #rm -rf Azuriom-$AZURIOM_VER.zip
 }
 
 function install_cron() {
@@ -452,6 +432,8 @@ function install_cron() {
     wget -O cron https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/cron/cron
     crontab cron
     rm cron
+  elif [[ "$OS" == "centos" ]]; then
+    echo "No Support"
   fi
 }
 
@@ -473,11 +455,24 @@ function mod_cloudflare() {
   systemctl restart apache2
 }
 
-function autoUpdate() {
-  if [[ "$OS" =~ (debian|ubuntu) ]]; then
-    echo "Enable Automatic Updates..."
-    apt-get install -y unattended-upgrades
-  fi
+function install_azuriom() {
+  mkdir -p /var/www/html/
+  rm -rf /var/www/html/*
+  wget https://azuriom.com/storage/AzuriomInstaller.zip -O /var/www/html/AzuriomInstaller.zip
+  unzip -o /var/www/html/AzuriomInstaller.zip -d /var/www/html/
+  rm -r /var/www/html/AzuriomInstaller.zip
+  chmod -R 755 /var/www/html
+  chown -R www-data:www-data /var/www/html
+  #AZURIOM_VER="$(
+  #git ls-remote --tags https://github.com/Azuriom/Azuriom.git \
+  #| cut -d/ -f3 \
+  #| grep -vE -- '-rc|-b' \
+  #| sed -E 's/^v//' \
+  #| sort -V \
+  #| tail -1 )"
+  #wget https://github.com/Azuriom/Azuriom/releases/download/v$AZURIOM_VER/Azuriom-$AZURIOM_VER.zip
+  #unzip -q Azuriom-$AZURIOM_VER.zip
+  #rm -rf Azuriom-$AZURIOM_VER.zip
 }
 
 function autoUpdate() {
@@ -542,18 +537,22 @@ function update() {
 }
 
 function updatephpMyAdmin() {
-  rm -rf /usr/share/phpmyadmin/*
-  cd /usr/share/phpmyadmin/ || exit
-  PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
-  wget https://files.phpmyadmin.net/phpMyAdmin/"$PHPMYADMIN_VER"/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
-  tar xzf /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
-  rm -f /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
-  # Create TempDir
-  mkdir /usr/share/phpmyadmin/tmp || exit
-  chown www-data:www-data /usr/share/phpmyadmin/tmp
-  chmod 700 /var/www/phpmyadmin/tmp
-  randomBlowfishSecret=$(openssl rand -base64 32)
-  sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
+  if [[ "$OS" =~ (debian|ubuntu) ]]; then
+    rm -rf /usr/share/phpmyadmin/*
+    cd /usr/share/phpmyadmin/ || exit
+    PHPMYADMIN_VER=$(curl -s "https://api.github.com/repos/phpmyadmin/phpmyadmin/releases/latest" | grep -m1 '^[[:blank:]]*"name":' | cut -d \" -f 4)
+    wget https://files.phpmyadmin.net/phpMyAdmin/"$PHPMYADMIN_VER"/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz -O /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
+    tar xzf /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz --strip-components=1 --directory /usr/share/phpmyadmin
+    rm -f /usr/share/phpmyadmin/phpMyAdmin-"$PHPMYADMIN_VER"-all-languages.tar.gz
+    # Create TempDir
+    mkdir /usr/share/phpmyadmin/tmp || exit
+    chown www-data:www-data /usr/share/phpmyadmin/tmp
+    chmod 700 /var/www/phpmyadmin/tmp
+    randomBlowfishSecret=$(openssl rand -base64 32)
+    sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
+  elif [[ "$OS" == "centos" ]]; then
+    echo "No Support"
+  fi
 }
 
 initialCheck
