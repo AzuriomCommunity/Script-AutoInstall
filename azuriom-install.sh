@@ -104,7 +104,7 @@ function checkOS() {
 
 function script() {
   installQuestions
-  update
+  updatepackages
   aptinstall
   aptinstall_php
   aptinstall_"$webserver"
@@ -233,7 +233,7 @@ function installQuestions() {
   fi
 }
 
-function update() {
+function updatepackages() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     apt-get update && apt-get upgrade -y
   elif [[ "$OS" == "centos" ]]; then
