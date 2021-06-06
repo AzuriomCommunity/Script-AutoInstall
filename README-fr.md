@@ -24,13 +24,14 @@ Le script supporte ces OS :
 | Ubuntu 16.04          |✅     |
 | Ubuntu 18.04          |✅     |
 | Ubuntu 20.04          |✅     |
+| Ubuntu 21.04          |❌     |
 | CentOS 7              |❌     |
 | CentOS 8              |❌     |
 ## Fonctionnalités
-* NGINX 1.19.X & Apache2
+* NGINX 1.21.X & Apache2
 * MySQL 5.7 - 8.0 & MariaDB 10.3 - 10.5
-* PHP 7.3 à 7.4
-* phpMyAdmin 5.1.0
+* PHP 7.3 à 8.0
+* phpMyAdmin 5.1.1
 ## À faire
 https://github.com/MaximeMichaud/Azuriom-install/projects/1/
 ## DOCUMENTATION
