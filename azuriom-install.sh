@@ -416,7 +416,7 @@ function aptinstall_phpmyadmin() {
       apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
       service nginx restart
     elif [[ "$webserver" =~ (apache2) ]]; then
-      wget -O /etc/apache2/sites-available/ https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
+      wget -O /etc/apache2/sites-available/phpmyadmin.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
       a2ensite phpmyadmin
       systemctl restart apache2
     fi
