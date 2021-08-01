@@ -346,6 +346,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+        service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
       fi
@@ -355,6 +356,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+        service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
       fi
@@ -364,6 +366,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+        service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
       fi
@@ -375,6 +378,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+        service php$PHP-fpm restart
         systemctl restart apache2
       fi
       if [[ "$VERSION_ID" == "11" ]]; then
@@ -383,6 +387,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+        service php$PHP-fpm restart
         systemctl restart apache2
       fi
       if [[ "$VERSION_ID" =~ (16.04|18.04|20.04) ]]; then
@@ -391,6 +396,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+        service php$PHP-fpm restart
         systemctl restart apache2
       fi
     fi
