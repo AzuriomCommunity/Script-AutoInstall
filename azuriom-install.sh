@@ -344,18 +344,8 @@ function aptinstall_php() {
     echo "PHP Installation"
     curl -sSL -o /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     if [[ "$webserver" =~ (nginx) ]]; then
-      if [[ "$VERSION_ID" =~ (9|10) ]]; then
+      if [[ "$VERSION_ID" =~ (9|10|11) ]]; then
         echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
-        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
-        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
-        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
-        service php$PHP-fpm restart
-        apt-get remove apache2 -y
-        systemctl restart nginx
-      fi
-      if [[ "$VERSION_ID" == "11" ]]; then
-        echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
         apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
@@ -376,17 +366,8 @@ function aptinstall_php() {
       fi
     fi
     if [[ "$webserver" =~ (apache2) ]]; then
-      if [[ "$VERSION_ID" =~ (9|10) ]]; then
+      if [[ "$VERSION_ID" =~ (9|10|11) ]]; then
         echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
-        apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
-        sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
-        sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
-        sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
-        service php$PHP-fpm restart
-        systemctl restart apache2
-      fi
-      if [[ "$VERSION_ID" == "11" ]]; then
-        echo "deb https://packages.sury.org/php/ buster main" | tee /etc/apt/sources.list.d/php.list
         apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
