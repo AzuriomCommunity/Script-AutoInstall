@@ -343,6 +343,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
@@ -353,6 +354,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
+		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
@@ -365,6 +367,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         systemctl restart apache2
       fi
@@ -374,6 +377,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
+		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         systemctl restart apache2
       fi
