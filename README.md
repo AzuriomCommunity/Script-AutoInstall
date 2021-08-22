@@ -5,10 +5,8 @@
 [![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://github.com/MaximeMichaud/Azuriom-install/blob/master/LICENSE)
 [![Chat](https://img.shields.io/discord/625774284823986183?color=5865f2&label=Discord&logo=discord&logoColor=fff&style=flat-square)](https://azuriom.com/discord)
 ## Usage
-```sh
-curl -O https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
-chmod +x azuriom-install.sh
-./azuriom-install.sh
+```bash
+bash <(curl -s https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh)
 ```
 ## Compatibility
 The latest versions are more stable.

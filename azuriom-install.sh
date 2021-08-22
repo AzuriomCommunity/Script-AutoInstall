@@ -6,9 +6,7 @@
 # URL : https://azuriom.com
 #
 # This script is intended for a quick and easy installation :
-# curl -O https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
-# chmod +x azuriom-install.sh
-# ./azuriom-install.sh
+# bash <(curl -s https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh)
 #
 # Azuriom-install Copyright (c) 2020-2021 Maxime Michaud
 # Licensed under MIT License
