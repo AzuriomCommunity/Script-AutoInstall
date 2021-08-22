@@ -39,3 +39,7 @@ _\* MYSQL is not yet supported in Debian 11 (Bullseye)_
 * phpMyAdmin 5.1.1
 ## DOCUMENTATION
 **[WIKI](https://github.com/MaximeMichaud/Azuriom-install/wiki/)**
+
+## Contributors
+
+Created and maintained by [Maxime Michaud](https://github.com/MaximeMichaud).
