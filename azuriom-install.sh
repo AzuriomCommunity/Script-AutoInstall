@@ -400,10 +400,10 @@ function aptinstall_phpmyadmin() {
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
-    if [[ "$webserver" =~ (nginx) ]]; then
-      apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
-      service nginx restart
-    elif [[ "$webserver" =~ (apache2) ]]; then
+	#if [[ "$webserver" =~ (nginx) ]]; then
+      #apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
+      #service nginx restart
+    if [[ "$webserver" =~ (apache2) ]]; then
       wget -O /etc/apache2/sites-available/phpmyadmin.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
       a2ensite phpmyadmin
       systemctl restart apache2
