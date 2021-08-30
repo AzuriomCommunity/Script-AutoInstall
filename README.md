@@ -1,3 +1,5 @@
+<p align="center"><img src="https://github.com/MaximeMichaud/Azuriom-install/blob/master/.github/logo-text.svg" width="400" alt="Azuriom"></p>
+
 # Azuriom-install
 [![ShellCheck](https://github.com/MaximeMichaud/Azuriom-install/workflows/ShellCheck/badge.svg)](https://github.com/MaximeMichaud/Azuriom-install/actions?query=workflow%3AShellCheck)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/d9f1f98d0fd348fe97c95d3dd081a8ff)](https://app.codacy.com/manual/MaximeMichaud/Azuriom-install?utm_source=github.com&utm_medium=referral&utm_content=MaximeMichaud/Azuriom-install&utm_campaign=Badge_Grade_Dashboard)
