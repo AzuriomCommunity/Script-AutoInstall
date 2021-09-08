@@ -445,7 +445,7 @@ function mod_cloudflare() {
 function install_azuriom() {
   mkdir -p /var/www/html/
   rm -rf /var/www/html/*
-  wget https://azuriom.com/storage/AzuriomInstaller.zip -O /var/www/html/AzuriomInstaller.zip
+  wget https://azuriom.s3.fr-par.scw.cloud/AzuriomInstaller.zip -O /var/www/html/AzuriomInstaller.zip
   unzip -o /var/www/html/AzuriomInstaller.zip -d /var/www/html/
   rm -r /var/www/html/AzuriomInstaller.zip
   chmod -R 755 /var/www/html
