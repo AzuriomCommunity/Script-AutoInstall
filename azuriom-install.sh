@@ -297,13 +297,13 @@ function aptinstall_mariadb() {
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
+	apt-key adv --recv-keys --keyserver pgp.mit.edu 5072E1F5
     if [[ "$database_ver" == "8.0" ]]; then
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/mysql/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" =~ (9|10|11|18.04|20.04) ]]; then
       echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
       echo "deb-src http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
-      apt-key adv --keyserver keys.gnupg.net --recv-keys 8C718D3B5072E1F5
       apt-get update && apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     elif [[ "$OS" == "centos" ]]; then
