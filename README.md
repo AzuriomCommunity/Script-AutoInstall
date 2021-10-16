@@ -20,7 +20,7 @@ This script supports the following Linux distributions:
 | Debian 8                |❌     |
 | Debian 9                |✅     |
 | Debian 10               |✅     |
-| Debian 11               |✅*      |
+| Debian 11               |✅     |
 | Ubuntu 14.04            |❌     |
 | Ubuntu 16.04            |❌     |
 | Ubuntu 18.04            |✅     |
@@ -28,7 +28,6 @@ This script supports the following Linux distributions:
 | CentOS 7                |❌     |
 | CentOS 8                |❌     |
 
-_\* MYSQL is not yet supported in Debian 11 (Bullseye)_
 ## Features
 - Automatic installation of Azuriom (dependencies, database, cronjob, webserver).
 - Secure NGINX with support for very latest improvements like HTTP2 with ALPN, 0-RTT support for TLS 1.3, TLS 1.3 support, x25519 support, etc.
