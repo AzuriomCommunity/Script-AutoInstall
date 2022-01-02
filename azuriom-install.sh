@@ -8,7 +8,7 @@
 # This script is intended for a quick and easy installation :
 # bash <(curl -s https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh)
 #
-# Azuriom-install Copyright (c) 2020-2021 Maxime Michaud
+# Azuriom-install Copyright (c) 2020-2022 Maxime Michaud
 # Licensed under MIT License
 #
 #   Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -122,21 +122,21 @@ function installQuestions() {
   echo ""
   echo "${cyan}Which Version of PHP ?"
   echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
-  echo "   1) PHP 8 (recommended) ${normal}"
-  echo "   2) PHP 7.4 ${normal}"
-  echo "${yellow}   3) PHP 7.3 ${normal}${cyan}"
+  echo "   1) PHP 8.1 (recommended) ${normal}"
+  echo "   2) PHP 8 ${normal}"
+  echo "${yellow}   3) PHP 7.4 ${normal}${cyan}"
   until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
     read -rp "Version [1-3]: " -e -i 1 PHP_VERSION
   done
   case $PHP_VERSION in
   1)
-    PHP="8.0"
+    PHP="8.1"
     ;;
   2)
-    PHP="7.4"
+    PHP="8.0"
     ;;
   3)
-    PHP="7.3"
+    PHP="7.4"
     ;;
   esac
   echo "Which type of webserver ?"
@@ -391,9 +391,10 @@ function aptinstall_phpmyadmin() {
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
-	#if [[ "$webserver" =~ (nginx) ]]; then
-      #apt-get update && apt-get install php7.4{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
-      #service nginx restart
+	if [[ "$webserver" =~ (nginx) ]]; then
+      apt-get update && apt-get install php8.0{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
+      service nginx restart
+	fi
     if [[ "$webserver" =~ (apache2) ]]; then
       wget -O /etc/apache2/sites-available/phpmyadmin.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
       a2ensite phpmyadmin
