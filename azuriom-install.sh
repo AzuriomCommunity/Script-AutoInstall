@@ -468,7 +468,7 @@ function autoUpdate() {
 function setupdone() {
   IP=$(curl 'https://api.ipify.org')
   echo "${cyan}It done!"
-  echo "${cyan}Configuration Database/User: ${red}http://$IP/install.php"
+  echo "${cyan}Configuration Database/User: ${red}http://$IP/index.php"
   echo "${cyan}phpMyAdmin: ${red}http://$IP/phpmyadmin"
   echo "${cyan}For the moment, If you choose to use MariaDB, you will need to execute ${normal}${on_red}${white}mysql_secure_installation${normal}${cyan} for setting the password"
 }
