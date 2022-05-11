@@ -297,13 +297,13 @@ function aptinstall_mariadb() {
 function aptinstall_mysql() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MYSQL Installation"
-	apt-key adv --recv-keys --keyserver pgp.mit.edu 5072E1F5
+    apt-key adv --recv-keys --keyserver pgp.mit.edu 5072E1F5
     if [[ "$database_ver" == "8.0" ]]; then
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/mysql/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" =~ (9|10|11|18.04|20.04) ]]; then
       echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
+      echo "deb-src https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver">>/etc/apt/sources.list.d/mysql.list
       apt-get update && apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     elif [[ "$OS" == "centos" ]]; then
@@ -334,7 +334,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
-		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
@@ -345,7 +345,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/fpm/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/fpm/php.ini
-		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         apt-get remove apache2 -y
         systemctl restart nginx
@@ -358,7 +358,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
-		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         systemctl restart apache2
       fi
@@ -368,7 +368,7 @@ function aptinstall_php() {
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|post_max_size = 8M|post_max_size = 50M|' /etc/php/$PHP/apache2/php.ini
         sed -i 's|;max_input_vars = 1000|max_input_vars = 2000|' /etc/php/$PHP/apache2/php.ini
-		sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
+        sed -i 's|memory_limit = 128M|memory_limit = 256M|' /etc/php/$PHP/fpm/php.ini
         service php$PHP-fpm restart
         systemctl restart apache2
       fi
@@ -391,10 +391,6 @@ function aptinstall_phpmyadmin() {
     randomBlowfishSecret=$(openssl rand -base64 32)
     sed -e "s|cfg\['blowfish_secret'\] = ''|cfg['blowfish_secret'] = '$randomBlowfishSecret'|" /usr/share/phpmyadmin/config.sample.inc.php >/usr/share/phpmyadmin/config.inc.php
     ln -s /usr/share/phpmyadmin /var/www/phpmyadmin
-	# if [[ "$webserver" =~ (nginx) ]]; then
-      # apt-get update && apt-get install php8.0{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
-      # service nginx restart
-	# fi
     if [[ "$webserver" =~ (apache2) ]]; then
       wget -O /etc/apache2/sites-available/phpmyadmin.conf https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/apache2/phpmyadmin.conf
       a2ensite phpmyadmin
