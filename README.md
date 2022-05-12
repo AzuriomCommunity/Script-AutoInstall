@@ -30,7 +30,6 @@ This script supports the following Linux distributions:
 
 |Operating System	      |Support|
 |--------                 |---    |
-| Debian 9                |✅     |
 | Debian 10               |✅     |
 | Debian 11               |✅     |
 | Ubuntu 18.04            |✅     |
@@ -47,7 +46,7 @@ This script supports the following Linux distributions:
 * NGINX 1.21.X & Apache2
 * MySQL 5.7 - 8.0 & MariaDB 10.3 - 10.6
 * PHP 7.4 to 8.1
-* phpMyAdmin 5.1.3
+* phpMyAdmin 5.2.0
 ## DOCUMENTATION
 **[WIKI](https://github.com/MaximeMichaud/Azuriom-install/wiki/)**
 

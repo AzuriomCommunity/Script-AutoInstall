@@ -61,7 +61,7 @@ function checkOS() {
     source /etc/os-release
 
     if [[ "$ID" == "debian" || "$ID" == "raspbian" ]]; then
-      if [[ ! $VERSION_ID =~ (9|10|11) ]]; then
+      if [[ ! $VERSION_ID =~ (10|11) ]]; then
         echo "⚠️ ${alert}Your version of Debian is not supported.${normal}"
         echo ""
         echo "However, if you're using older or unstable/testing then you can continue."
@@ -301,7 +301,7 @@ function aptinstall_mariadb() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MariaDB Installation"
     apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    if [[ "$VERSION_ID" =~ (9|10|11|18.04|20.04) ]]; then
+    if [[ "$VERSION_ID" =~ (10|11|18.04|20.04) ]]; then
       echo "deb [arch=amd64] https://mirror.mva-n.net/mariadb/repo/$database_ver/$ID $(lsb_release -sc) main" >/etc/apt/sources.list.d/mariadb.list
       apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
@@ -316,7 +316,7 @@ function aptinstall_mysql() {
     if [[ "$database_ver" == "8.0" ]]; then
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/mysql/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
-    if [[ "$VERSION_ID" =~ (9|10|11|18.04|20.04) ]]; then
+    if [[ "$VERSION_ID" =~ (10|11|18.04|20.04) ]]; then
       echo "deb https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver">/etc/apt/sources.list.d/mysql.list
       echo "deb-src https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-get update && apt-get install mysql-server mysql-client -y
@@ -330,7 +330,7 @@ function aptinstall_mysql() {
 function aptinstall_sqlite() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "SQLite Installation"
-    if [[ "$VERSION_ID" =~ (9|10|11|18.04|20.04) ]]; then
+    if [[ "$VERSION_ID" =~ (10|11|18.04|20.04) ]]; then
       apt-get update && apt-get install php$PHP{,-sqlite} -y
     elif [[ "$OS" == "centos" ]]; then
       echo "No Support"
@@ -343,7 +343,7 @@ function aptinstall_php() {
     echo "PHP Installation"
     curl -sSL -o /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
     if [[ "$webserver" =~ (nginx) ]]; then
-      if [[ "$VERSION_ID" =~ (9|10|11) ]]; then
+      if [[ "$VERSION_ID" =~ (10|11) ]]; then
         echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
         apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
@@ -367,7 +367,7 @@ function aptinstall_php() {
       fi
     fi
     if [[ "$webserver" =~ (apache2) ]]; then
-      if [[ "$VERSION_ID" =~ (9|10|11) ]]; then
+      if [[ "$VERSION_ID" =~ (10|11) ]]; then
         echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee /etc/apt/sources.list.d/php.list
         apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
