@@ -76,7 +76,7 @@ function checkOS() {
       fi
     elif [[ "$ID" == "ubuntu" ]]; then
       OS="ubuntu"
-      if [[ ! $VERSION_ID =~ (18.04|20.04) ]]; then
+      if [[ ! $VERSION_ID =~ (20.04|22.04) ]]; then
         echo "⚠️ ${alert}Your version of Ubuntu is not supported.${normal}"
         echo ""
         echo "However, if you're using Older Ubuntu or beta, then you can continue."
@@ -301,7 +301,7 @@ function aptinstall_mariadb() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "MariaDB Installation"
     apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
-    if [[ "$VERSION_ID" =~ (10|11|18.04|20.04) ]]; then
+    if [[ "$VERSION_ID" =~ (10|11|20.04|22.04) ]]; then
       echo "deb [arch=amd64] https://mirror.mva-n.net/mariadb/repo/$database_ver/$ID $(lsb_release -sc) main" >/etc/apt/sources.list.d/mariadb.list
       apt-get update && apt-get install mariadb-server -y
       systemctl enable mariadb && systemctl start mariadb
@@ -316,7 +316,7 @@ function aptinstall_mysql() {
     if [[ "$database_ver" == "8.0" ]]; then
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/mysql/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
-    if [[ "$VERSION_ID" =~ (10|11|18.04|20.04) ]]; then
+    if [[ "$VERSION_ID" =~ (10|11|20.04|22.04) ]]; then
       echo "deb https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver">/etc/apt/sources.list.d/mysql.list
       echo "deb-src https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-get update && apt-get install mysql-server mysql-client -y
@@ -330,7 +330,7 @@ function aptinstall_mysql() {
 function aptinstall_sqlite() {
   if [[ "$OS" =~ (debian|ubuntu) ]]; then
     echo "SQLite Installation"
-    if [[ "$VERSION_ID" =~ (10|11|18.04|20.04) ]]; then
+    if [[ "$VERSION_ID" =~ (10|11|20.04|22.04) ]]; then
       apt-get update && apt-get install php$PHP{,-sqlite} -y
     elif [[ "$OS" == "centos" ]]; then
       echo "No Support"
@@ -354,7 +354,7 @@ function aptinstall_php() {
         apt-get remove apache2 -y
         systemctl restart nginx
       fi
-      if [[ "$VERSION_ID" =~ (18.04|20.04) ]]; then
+      if [[ "$VERSION_ID" =~ (20.04|22.04) ]]; then
         add-apt-repository -y ppa:ondrej/php
         apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql,-fpm} -y
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/fpm/php.ini
@@ -377,7 +377,7 @@ function aptinstall_php() {
         service php$PHP-fpm restart
         systemctl restart apache2
       fi
-      if [[ "$VERSION_ID" =~ (18.04|20.04) ]]; then
+      if [[ "$VERSION_ID" =~ (20.04|22.04) ]]; then
         add-apt-repository -y ppa:ondrej/php
         apt-get update && apt-get install php$PHP{,-bcmath,-mbstring,-common,-xml,-curl,-gd,-zip,-mysql} -y
         sed -i 's|upload_max_filesize = 2M|upload_max_filesize = 50M|' /etc/php/$PHP/apache2/php.ini
