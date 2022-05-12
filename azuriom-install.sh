@@ -31,6 +31,15 @@ white=$(tput setaf 7)
 normal=$(tput sgr0)
 alert=${white}${on_red}
 on_red=$(tput setab 1)
+# Define installation parameters for headless install (fallback if unspecifed)
+if [[ $HEADLESS == "y" ]]; then
+  # Define options
+  PHP=8.1
+  webserver=nginx
+  nginx_branch=mainline
+  database=mariadb
+  database_ver=10.6
+fi
 #################################################################################
 function isRoot() {
   if [ "$EUID" -ne 0 ]; then
@@ -114,124 +123,130 @@ function script() {
   setupdone
 
 }
+# Clean screen before launching menu
+if [[ $HEADLESS == "n" ]]; then
+  clear
+fi
 function installQuestions() {
-  echo "${cyan}Welcome to Azuriom-install !"
-  echo "https://github.com/MaximeMichaud/Azuriom-install"
-  echo "I need to ask some questions before starting the configuration."
-  echo "You can leave the default options and just press Enter if that's right for you."
-  echo ""
-  echo "${cyan}Which Version of PHP ?"
-  echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
-  echo "   1) PHP 8.1 (recommended) ${normal}"
-  echo "   2) PHP 8 ${normal}"
-  echo "${yellow}   3) PHP 7.4 ${normal}${cyan}"
-  until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
-    read -rp "Version [1-3]: " -e -i 1 PHP_VERSION
-  done
-  case $PHP_VERSION in
-  1)
-    PHP="8.1"
-    ;;
-  2)
-    PHP="8.0"
-    ;;
-  3)
-    PHP="7.4"
-    ;;
-  esac
-  echo "Which type of webserver ?"
-  echo "   1) NGINX"
-  echo "   2) Apache2"
-  until [[ "$WEBSERVER" =~ ^[1-2]$ ]]; do
-    read -rp "Version [1-2]: " -e -i 1 WEBSERVER
-  done
-  case $WEBSERVER in
-  1)
-    webserver="nginx"
-    ;;
-  2)
-    webserver="apache2"
-    ;;
-  esac
-  if [[ "$webserver" =~ (nginx) ]]; then
-    echo "Which branch of NGINX ?"
-    echo "${green}   1) Mainline ${normal}"
-    echo "${green}   2) Stable ${normal}${cyan}"
-    until [[ "$NGINX_BRANCH" =~ ^[1-2]$ ]]; do
-      read -rp "Version [1-2]: " -e -i 1 NGINX_BRANCH
+  if [[ $HEADLESS != "y" ]]; then
+    echo "${cyan}Welcome to Azuriom-install !"
+    echo "https://github.com/MaximeMichaud/Azuriom-install"
+    echo "I need to ask some questions before starting the configuration."
+    echo "You can leave the default options and just press Enter if that's right for you."
+    echo ""
+    echo "${cyan}Which Version of PHP ?"
+    echo "${red}Red = End of life ${yellow}| Yellow = Security fixes only ${green}| Green = Active support"
+    echo "   1) PHP 8.1 (recommended) ${normal}"
+    echo "   2) PHP 8 ${normal}"
+    echo "${yellow}   3) PHP 7.4 ${normal}${cyan}"
+    until [[ "$PHP_VERSION" =~ ^[1-3]$ ]]; do
+      read -rp "Version [1-3]: " -e -i 1 PHP_VERSION
     done
-    case $NGINX_BRANCH in
+    case $PHP_VERSION in
     1)
-      nginx_branch="mainline"
+      PHP="8.1"
       ;;
     2)
-      nginx_branch="stable"
-      ;;
-    esac
-  fi
-  echo "Which type of database ?"
-  echo "   1) MariaDB"
-  echo "   2) MySQL"
-  echo "   3) SQLite (for dev)"
-  until [[ "$DATABASE" =~ ^[1-3]$ ]]; do
-    read -rp "Version [1-3]: " -e -i 1 DATABASE
-  done
-  case $DATABASE in
-  1)
-    database="mariadb"
-    ;;
-  2)
-    database="mysql"
-    ;;
-  3)
-    database="sqlite"
-    ;;
-  esac
-  if [[ "$database" =~ (mysql) ]]; then
-    echo "Which version of MySQL ?"
-    echo "${green}   1) MySQL 8.0 ${normal}"
-    echo "${red}   2) MySQL 5.7 ${normal}${cyan}"
-    until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
-      read -rp "Version [1-2]: " -e -i 1 DATABASE_VER
-    done
-    case $DATABASE_VER in
-    1)
-      database_ver="8.0"
-      ;;
-    2)
-      database_ver="5.7"
-      ;;
-    esac
-  fi
-  if [[ "$database" =~ (mariadb) ]]; then
-    echo "Which version of MariaDB ?"
-    echo "${green}   1) MariaDB 10.6 (Stable)${normal}"
-    echo "${yellow}   2) MariaDB 10.5 (Old Stable)${normal}"
-    echo "${yellow}   3) MariaDB 10.4 (Old Stable)${normal}"
-    echo "${yellow}   4) MariaDB 10.3 (Old Stable)${normal}${cyan}"
-    until [[ "$DATABASE_VER" =~ ^[1-4]$ ]]; do
-      read -rp "Version [1-4]: " -e -i 1 DATABASE_VER
-    done
-    case $DATABASE_VER in
-    1)
-      database_ver="10.6"
-      ;;
-    2)
-      database_ver="10.5"
+      PHP="8.0"
       ;;
     3)
-      database_ver="10.4"
-      ;;
-    4)
-      database_ver="10.3"
+      PHP="7.4"
       ;;
     esac
-  fi
-  echo ""
-  echo "We are ready to start the installation !"
-  APPROVE_INSTALL=${APPROVE_INSTALL:-n}
-  if [[ $APPROVE_INSTALL =~ n ]]; then
-    read -n1 -r -p "Press any key to continue..."
+    echo "Which type of webserver ?"
+    echo "   1) NGINX"
+    echo "   2) Apache2"
+    until [[ "$WEBSERVER" =~ ^[1-2]$ ]]; do
+      read -rp "Version [1-2]: " -e -i 1 WEBSERVER
+    done
+    case $WEBSERVER in
+    1)
+      webserver="nginx"
+      ;;
+    2)
+      webserver="apache2"
+      ;;
+    esac
+    if [[ "$webserver" =~ (nginx) ]]; then
+      echo "Which branch of NGINX ?"
+      echo "${green}   1) Mainline ${normal}"
+      echo "${green}   2) Stable ${normal}${cyan}"
+      until [[ "$NGINX_BRANCH" =~ ^[1-2]$ ]]; do
+        read -rp "Version [1-2]: " -e -i 1 NGINX_BRANCH
+      done
+      case $NGINX_BRANCH in
+      1)
+        nginx_branch="mainline"
+        ;;
+      2)
+        nginx_branch="stable"
+        ;;
+      esac
+    fi
+    echo "Which type of database ?"
+    echo "   1) MariaDB"
+    echo "   2) MySQL"
+    echo "   3) SQLite (for dev)"
+    until [[ "$DATABASE" =~ ^[1-3]$ ]]; do
+      read -rp "Version [1-3]: " -e -i 1 DATABASE
+    done
+    case $DATABASE in
+    1)
+      database="mariadb"
+      ;;
+    2)
+      database="mysql"
+      ;;
+    3)
+      database="sqlite"
+      ;;
+    esac
+    if [[ "$database" =~ (mysql) ]]; then
+      echo "Which version of MySQL ?"
+      echo "${green}   1) MySQL 8.0 ${normal}"
+      echo "${red}   2) MySQL 5.7 ${normal}${cyan}"
+      until [[ "$DATABASE_VER" =~ ^[1-2]$ ]]; do
+        read -rp "Version [1-2]: " -e -i 1 DATABASE_VER
+      done
+      case $DATABASE_VER in
+      1)
+        database_ver="8.0"
+        ;;
+      2)
+        database_ver="5.7"
+        ;;
+      esac
+    fi
+    if [[ "$database" =~ (mariadb) ]]; then
+      echo "Which version of MariaDB ?"
+      echo "${green}   1) MariaDB 10.6 (Stable)${normal}"
+      echo "${yellow}   2) MariaDB 10.5 (Old Stable)${normal}"
+      echo "${yellow}   3) MariaDB 10.4 (Old Stable)${normal}"
+      echo "${yellow}   4) MariaDB 10.3 (Old Stable)${normal}${cyan}"
+      until [[ "$DATABASE_VER" =~ ^[1-4]$ ]]; do
+        read -rp "Version [1-4]: " -e -i 1 DATABASE_VER
+      done
+      case $DATABASE_VER in
+      1)
+        database_ver="10.6"
+        ;;
+      2)
+        database_ver="10.5"
+        ;;
+      3)
+        database_ver="10.4"
+        ;;
+      4)
+        database_ver="10.3"
+        ;;
+      esac
+    fi
+    echo ""
+    echo "We are ready to start the installation !"
+    APPROVE_INSTALL=${APPROVE_INSTALL:-n}
+    if [[ $APPROVE_INSTALL =~ n ]]; then
+      read -n1 -r -p "Press any key to continue..."
+    fi
   fi
 }
 
@@ -302,8 +317,8 @@ function aptinstall_mysql() {
       wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/conf/mysql/default-auth-override.cnf -P /etc/mysql/mysql.conf.d
     fi
     if [[ "$VERSION_ID" =~ (9|10|11|18.04|20.04) ]]; then
-      echo "deb http://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >/etc/apt/sources.list.d/mysql.list
-      echo "deb-src https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver">>/etc/apt/sources.list.d/mysql.list
+      echo "deb https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver">/etc/apt/sources.list.d/mysql.list
+      echo "deb-src https://repo.mysql.com/apt/$ID/ $(lsb_release -sc) mysql-$database_ver" >>/etc/apt/sources.list.d/mysql.list
       apt-get update && apt-get install mysql-server mysql-client -y
       systemctl enable mysql && systemctl start mysql
     elif [[ "$OS" == "centos" ]]; then

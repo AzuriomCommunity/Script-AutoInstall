@@ -10,6 +10,19 @@
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh)
 ```
+## Headless Usage
+```bash
+wget https://raw.githubusercontent.com/MaximeMichaud/Azuriom-install/master/azuriom-install.sh
+chmod +x azuriom-install.sh
+HEADLESS=y \
+PHP=8.1 \
+webserver=nginx \
+nginx_branch=mainline \
+database=mariadb \
+database_ver=10.6 \
+./azuriom.sh
+
+```
 ## Compatibility
 The latest versions are more stable.
 
