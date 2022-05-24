@@ -20,7 +20,7 @@ webserver=nginx \
 nginx_branch=mainline \
 database=mariadb \
 database_ver=10.6 \
-./azuriom.sh
+./azuriom-install.sh
 
 ```
 ## Compatibility
